@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="100" fill="#F0E6D3"/>
+  <text x="100" y="85" font-family="'Georgia','Times New Roman',serif" font-size="46" font-weight="700" fill="#3B2A1A" text-anchor="middle" dominant-baseline="middle" letter-spacing="2">POND'S</text>
+  <line x1="40" y1="110" x2="160" y2="110" stroke="#8B6914" stroke-width="1.5"/>
+  <text x="100" y="130" font-family="'Georgia',serif" font-size="13" fill="#8B6914" text-anchor="middle" dominant-baseline="middle" letter-spacing="3">BEAUTY</text>
+</svg>

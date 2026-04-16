@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <rect width="200" height="80" fill="#fff" rx="8"/>
+  <!-- Bayer cross simplified -->
+  <rect x="88" y="18" width="24" height="8" rx="2" fill="#10384F"/>
+  <rect x="88" y="36" width="24" height="8" rx="2" fill="#10384F"/>
+  <rect x="80" y="26" width="8" height="8" rx="2" fill="#10384F"/>
+  <rect x="112" y="26" width="8" height="8" rx="2" fill="#10384F"/>
+  <text x="100" y="70" font-family="Arial,sans-serif" font-size="16" fill="#10384F" text-anchor="middle" font-weight="bold" letter-spacing="3">BAYER</text>
+</svg>

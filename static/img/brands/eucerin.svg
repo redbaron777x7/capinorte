@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <rect width="400" height="260" fill="#fff"/>
+  <!-- Texto Eucerin azul escuro bold -->
+  <text x="195" y="110"
+    font-family="'Arial Black','Arial Bold',Arial,sans-serif"
+    font-size="82"
+    font-weight="900"
+    fill="#1A1E8F"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    letter-spacing="-2">Eucerin</text>
+  <!-- Símbolo ® -->
+  <text x="352" y="68"
+    font-family="Arial,sans-serif"
+    font-size="22"
+    fill="#1A1E8F"
+    text-anchor="middle">®</text>
+  <!-- Chevron vermelho apontando para baixo -->
+  <polygon points="80,165 200,215 320,165 200,195" fill="#E30613"/>
+</svg>

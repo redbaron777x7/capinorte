@@ -1,0 +1,163 @@
+{% extends "admin_base.html" %}
+{% block title %}Productos del Mes{% endblock %}
+{% block page_title %}🗓️ Productos del Mes (máximo 4){% endblock %}
+
+{% block extra_css %}
+<style>
+@media(max-width:680px){
+  .desc-grid{grid-template-columns:1fr !important}
+  .desc-preview-grid{grid-template-columns:repeat(2,1fr) !important;gap:10px !important}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="desc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+
+  <!-- SELECIONADOS -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>✅ Productos activos ({{ produtos_mes|length }}/4)</h2>
+    </div>
+    <div class="panel-body" style="padding:0;overflow-x:auto">
+      {% if produtos_mes %}
+      <table class="table" style="min-width:320px">
+
+        <thead><tr><th width="50">Img</th><th>Producto</th><th>Precio</th><th width="80">Quitar</th></tr></thead>
+        <tbody>
+          {% for p in produtos_mes %}
+          <tr>
+            <td>
+              {% if p.imagem_1 %}
+              <img src="{{ p.imagem_1 }}" style="width:44px;height:44px;object-fit:contain;border-radius:6px;background:#f5f5f5">
+              {% else %}<span style="font-size:1.5rem">💊</span>{% endif %}
+            </td>
+            <td>
+              <div style="font-weight:700;font-size:.83rem">{{ p.nome[:50] }}{% if p.nome|length>50 %}...{% endif %}</div>
+              <div style="font-size:.72rem;color:#888">{{ p.marca }}</div>
+            </td>
+            <td style="font-weight:800;color:#C1272D;font-size:.85rem">
+              {{ '$'+"{:,.0f}".format(p.preco_cop).replace(",",".") if p.preco_cop else '—' }}
+            </td>
+            <td>
+              <form method="post">
+                <input type="hidden" name="action" value="remove">
+                <input type="hidden" name="produto_id" value="{{ p.id }}">
+                <button class="btn btn-rojo btn-sm" type="submit"
+                        onclick="return confirm('¿Quitar este producto del mes?')">✕</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div style="text-align:center;padding:40px;color:#aaa">
+        <div style="font-size:2.5rem;margin-bottom:8px">🗓️</div>
+        <p>Ningún producto seleccionado aún.</p>
+        <p style="font-size:.78rem;margin-top:4px">Busca y agrega abajo →</p>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if produtos_mes|length >= 4 %}
+    <div style="padding:12px 16px;background:#fef3c7;font-size:.82rem;color:#92400e;font-weight:700;border-top:1px solid #fde68a">
+      ⚠️ Límite de 4 productos alcanzado. Quita uno para agregar otro.
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- BUSCA E ADICIONAR -->
+  <div class="panel">
+    <div class="panel-header"><h2>🔍 Buscar producto para agregar</h2></div>
+    <div class="panel-body">
+
+      <form method="get" style="display:flex;gap:8px;margin-bottom:16px">
+        <input class="form-control" name="q" value="{{ busca }}"
+               placeholder="Buscar por nombre o marca..." style="flex:1">
+        <button class="btn btn-verde" type="submit">Buscar</button>
+        {% if busca %}<a class="btn btn-gris" href="/admin/descuentos">Limpiar</a>{% endif %}
+      </form>
+
+      {% if busca and not resultados %}
+      <div style="text-align:center;padding:20px;color:#aaa;font-size:.85rem">
+        Sin resultados para "{{ busca }}"
+      </div>
+      {% endif %}
+
+      {% for p in resultados %}
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5">
+        {% if p.imagem_1 %}
+        <img src="{{ p.imagem_1 }}" style="width:44px;height:44px;object-fit:contain;border-radius:6px;background:#f5f5f5;flex:none">
+        {% else %}<span style="font-size:1.5rem;flex:none">💊</span>{% endif %}
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.nome[:45] }}</div>
+          <div style="font-size:.72rem;color:#888">{{ p.marca }} · {{ p.categoria }}</div>
+          <div style="font-size:.82rem;font-weight:800;color:#C1272D">
+            {{ '$'+"{:,.0f}".format(p.preco_cop).replace(",",".") if p.preco_cop else 'Sin precio' }}
+          </div>
+        </div>
+        {% if produtos_mes|length < 4 %}
+        <form method="post" style="flex:none">
+          <input type="hidden" name="action" value="add">
+          <input type="hidden" name="produto_id" value="{{ p.id }}">
+          <button class="btn btn-verde btn-sm" type="submit">+ Agregar</button>
+        </form>
+        {% else %}
+        <span style="font-size:.72rem;color:#bbb;flex:none">Límite<br>alcanzado</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      {% if not busca %}
+      <div style="text-align:center;padding:20px;color:#bbb;font-size:.82rem">
+        Escribe el nombre del medicamento o marca para buscarlo
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- PREVIEW -->
+{% if produtos_mes %}
+<div class="panel" style="margin-top:20px">
+  <div class="panel-header"><h2>👁️ Vista previa — como se verá en la tienda</h2></div>
+  <div class="panel-body">
+    <div class="desc-preview-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      {% for p in produtos_mes %}
+      {% set desc = ((p.preco_lista_cop - p.preco_cop) / p.preco_lista_cop * 100)|int if p.preco_lista_cop and p.preco_cop and p.preco_lista_cop > p.preco_cop else 0 %}
+      <div style="background:#fafafa;border-radius:10px;overflow:hidden;border:1.5px solid #e8e8e8;position:relative">
+        {% if desc > 0 %}
+        <div style="position:absolute;top:8px;left:8px;background:#C1272D;color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:20px">-{{ desc }}%</div>
+        {% endif %}
+        <div style="aspect-ratio:1;background:#fff;display:flex;align-items:center;justify-content:center;padding:12px">
+          {% if p.imagem_1 %}
+          <img src="{{ p.imagem_1 }}" style="width:80%;height:80%;object-fit:contain">
+          {% else %}<span style="font-size:2.5rem">💊</span>{% endif %}
+        </div>
+        <div style="padding:10px 12px">
+          <div style="font-size:9px;font-weight:700;color:#bbb;text-transform:uppercase">{{ p.marca }}</div>
+          <div style="font-size:11px;font-weight:800;color:#1A1A1A;line-height:1.3;margin:3px 0">{{ p.nome[:45] }}</div>
+          <div style="font-size:14px;font-weight:900;color:#C1272D">
+            {{ '$'+"{:,.0f}".format(p.preco_cop).replace(",",".") if p.preco_cop else '—' }}
+            {% if desc > 0 %}
+            <span style="font-size:10px;color:#bbb;font-weight:600;text-decoration:line-through;margin-left:4px">${{ "{:,.0f}".format(p.preco_lista_cop).replace(",",".") }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <div style="background:#25D366;color:#fff;text-align:center;font-size:10px;font-weight:800;padding:7px">📲 Pedir por WhatsApp</div>
+      </div>
+      {% endfor %}
+      {% for i in range(4 - produtos_mes|length) %}
+      <div style="background:#f5f5f5;border-radius:10px;border:1.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:center;aspect-ratio:.9;color:#ccc;font-size:.75rem;font-weight:700;text-align:center">Slot vacío<br>Agrega producto</div>
+      {% endfor %}
+    </div>
+    <p style="font-size:.75rem;color:#aaa;margin-top:12px;text-align:center">
+      Así se verán en la sección "Productos del mes" de la tienda
+    </p>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

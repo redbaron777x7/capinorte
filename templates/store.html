@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<style>
+/* Mobile fixes for store page */
+@media(max-width:768px){
+  /* Hide lateral banners on mobile */
+  .lat-banner-mob{display:none !important}
+  /* Small banners adapt */
+  .small-banner-mob img{height:60px !important}
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-item"><div class="info-ico">🚚</div><div><div class="info-lbl">Envío rápido</div><div class="info-sub">Domicilio disponible</div></div></div>
+  <div class="info-sep"></div>
+  <div class="info-item"><div class="info-ico">💰</div><div><div class="info-lbl">Mejores precios</div><div class="info-sub">Compara y ahorra</div></div></div>
+  <div class="info-sep"></div>
+  <div class="info-item"><div class="info-ico">🎧</div><div><div class="info-lbl">Atención 24/7</div><div class="info-sub">Dom. a Domingo</div></div></div>
+  <div class="info-sep"></div>
+  <div class="info-item"><div class="info-ico">🔒</div><div><div class="info-lbl">Pago seguro</div><div class="info-sub">Transacciones protegidas</div></div></div>
+</div>
+
+<!-- HERO BANNER — GRID LOCATEL (slider 75% + side 25%) -->
+<div class="hero-banner">
+  <div class="hero-grid">
+
+    <!-- SLIDER PRINCIPAL -->
+    <div class="banner-wrap">
+      <div class="banner-track" id="bt">
+        {% if banners_p %}
+          {% for b in banners_p %}
+          <div class="banner-slide">
+            <a href="{{ b.link or '#' }}" style="display:block;width:100%;height:100%">
+              <picture>
+                {% if b.imagem_mobile %}
+                <source media="(max-width:768px)" srcset="{{ b.imagem_mobile }}">
+                {% endif %}
+                <img class="full" src="{{ b.imagem }}" alt="{{ b.titulo or '' }}" loading="{% if loop.first %}eager{% else %}lazy{% endif %}">
+              </picture>
+            </a>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="banner-slide default-1">
+            <div class="slide-body">
+              <span class="slide-tag">🔥 Bienvenidos</span>
+              <h1 class="slide-h">Mejora tu salud<br>con los <em>mejores</em><br>medicamentos</h1>
+              <p class="slide-p">Encuentra todo para tu bienestar con los mejores precios y la comodidad del domicilio.</p>
+              <div class="slide-btns">
+                <a href="/buscar?q=" class="btn-white">Ver productos 🛒</a>
+                <a href="https://wa.me/{{ config.get('whatsapp','') }}" class="btn-border" target="_blank">Pedir ahora →</a>
+              </div>
+            </div>
+            <div class="slide-deco">💊</div>
+          </div>
+          <div class="banner-slide default-2">
+            <div class="slide-body">
+              <span class="slide-tag">💄 Belleza</span>
+              <h1 class="slide-h">Cuidado personal<br>al <em>mejor precio</em></h1>
+              <p class="slide-p">Más de 3.000 productos con entrega a domicilio.</p>
+              <div class="slide-btns">
+                <a href="/categoria/Belleza" class="btn-white">Ver belleza ✨</a>
+                <a href="/buscar?q=" class="btn-border">Catálogo →</a>
+              </div>
+            </div>
+            <div class="slide-deco">🧴</div>
+          </div>
+          <div class="banner-slide default-3">
+            <div class="slide-body">
+              <span class="slide-tag">👶 Bebé y Mamá</span>
+              <h1 class="slide-h">Todo para el<br><em>bienestar</em><br>de tu bebé</h1>
+              <p class="slide-p">Pañales, cremas, alimentos infantiles y más.</p>
+              <div class="slide-btns">
+                <a href="/buscar?q=bebe" class="btn-white">Ver bebé 👶</a>
+                <a href="/buscar?q=maternidad" class="btn-border">Maternidad →</a>
+              </div>
+            </div>
+            <div class="slide-deco">👶</div>
+          </div>
+        {% endif %}
+      </div>
+      <button class="bnav bprev" id="bprev">‹</button>
+      <button class="bnav bnxt" id="bnxt">›</button>
+      <div class="bdots">
+        {% if banners_p %}
+          {% for b in banners_p %}<button class="bdot {% if loop.first %}on{% endif %}" data-i="{{ loop.index0 }}"></button>{% endfor %}
+        {% else %}
+          <button class="bdot on" data-i="0"></button>
+          <button class="bdot" data-i="1"></button>
+          <button class="bdot" data-i="2"></button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- SIDE BANNER (estilo Locatel — coluna lateral) -->
+    <div class="hero-side">
+      {% if banners_lat_izq %}
+        {% for bl in banners_lat_izq %}
+        <a href="{{ bl.link or '#' }}">
+          <img src="{{ bl.imagem }}" alt="{{ bl.titulo or 'Promoción' }}" loading="lazy">
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="hero-side-empty">
+          <span>📢</span>
+          <p>Agrega un banner<br>lateral desde el admin</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ 5 CATEGORÍAS PRINCIPALES VISUAIS (ícones SVG) ══ -->
+  <section class="home-cats-section">
+    <div class="home-cats-hdr">
+      <h2>Explora nuestras categorías principales</h2>
+      <p>Selecciona y ve directo a la sección correcta</p>
+    </div>
+    <div class="home-cats-row" id="homeCatsRow">
+
+      <a href="/categoria/Droguer%C3%ADa" class="home-cat-item" aria-label="Medicamentos">
+        <div class="home-cat-ico">
+          <img src="/static/img/cats/medicamento.svg" alt="Medicamentos" loading="lazy">
+        </div>
+        <span class="home-cat-name">Medicamentos</span>
+      </a>
+
+      <a href="/categoria/Cuidado%20Personal" class="home-cat-item" aria-label="Cuidado personal">
+        <div class="home-cat-ico">
+          <img src="/static/img/cats/cuidado-personal.svg" alt="Cuidado personal" loading="lazy">
+        </div>
+        <span class="home-cat-name">Cuidado personal</span>
+      </a>
+
+      <a href="/categoria/Belleza" class="home-cat-item" aria-label="Belleza">
+        <div class="home-cat-ico">
+          <img src="/static/img/cats/belleza.svg" alt="Belleza" loading="lazy">
+        </div>
+        <span class="home-cat-name">Belleza</span>
+      </a>
+
+      <a href="/categoria/Mercado%20y%20Hogar" class="home-cat-item" aria-label="Mercado y hogar">
+        <div class="home-cat-ico">
+          <img src="/static/img/cats/mercado-hogar.svg" alt="Mercado y hogar" loading="lazy">
+        </div>
+        <span class="home-cat-name">Mercado y hogar</span>
+      </a>
+
+      <a href="/categoria/Cuidado%20Beb%C3%A9%20y%20Mam%C3%A1" class="home-cat-item" aria-label="Cuidado bebé y mamá">
+        <div class="home-cat-ico">
+          <img src="/static/img/cats/cuidado-bebe.svg" alt="Cuidado bebé y mamá" loading="lazy">
+        </div>
+        <span class="home-cat-name">Cuidado bebé y mamá</span>
+      </a>
+
+    </div>
+    <!-- Dots indicator (visible only on mobile via CSS) -->
+    <div class="home-cats-dots" id="homeCatsDots">
+      <button class="hc-dot on" data-idx="0"></button>
+      <button class="hc-dot" data-idx="1"></button>
+    </div>
+  </section>
+
+
+  <!-- ══ SECCIÓN PROMOCIONAL — 4 BANNERS (estilo Locatel) ══ -->
+  <div class="sec-hdr">
+    <h2 style="font-size:16px">Conoce nuestros descuentos</h2>
+    <a class="sec-link" href="/buscar?q=oferta">Ver todos ›</a>
+  </div>
+
+  <div class="promo-banners-grid">
+    {% if banners_promo %}
+      {% for bp in banners_promo[:4] %}
+      <a href="{{ bp.link or '#' }}" class="promo-banner-card">
+        {% if bp.imagem %}
+        <img src="{{ bp.imagem }}" alt="{{ bp.titulo or 'Promoción' }}" loading="lazy">
+        {% else %}
+        <div class="promo-banner-empty">
+          <span>📢</span>
+          <p>Banner {{ loop.index }}</p>
+        </div>
+        {% endif %}
+      </a>
+      {% endfor %}
+      {# Fill remaining slots up to 4 #}
+      {% for i in range(4 - banners_promo[:4]|length) %}
+      <div class="promo-banner-card promo-banner-placeholder">
+        <div class="promo-banner-empty">
+          <span>🖼️</span>
+          <p>Espacio para<br>banner {{ banners_promo[:4]|length + loop.index }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      {% for i in range(4) %}
+      <div class="promo-banner-card promo-banner-placeholder">
+        <div class="promo-banner-empty">
+          <span>🖼️</span>
+          <p>Espacio para<br>banner {{ loop.index }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- PRODUCTOS DESTACADOS -->
+  {% if destaques %}
+  <div class="sec-hdr"><h2>⭐ Productos destacados</h2><a class="sec-link" href="/buscar?q=">Ver más ›</a></div>
+  <div class="pscroll-wrap">
+    <button class="sarr sl" onclick="scrollS('ds',-1)">‹</button>
+    <div class="pscroll" id="ds">
+      {% for p in destaques %}{% include "_card.html" %}{% endfor %}
+    </div>
+    <button class="sarr sr" onclick="scrollS('ds',1)">›</button>
+  </div>
+  {% endif %}
+
+  <!-- MARCAS -->
+  <div class="sec-hdr"><h2>🏷️ Marcas destacadas</h2></div>
+  <p style="font-size:12px;color:var(--txt2);margin-bottom:18px;line-height:1.65;max-width:700px">Encuentra en un solo lugar las marcas más importantes. Contamos con productos de cuidado facial, cuidado infantil y medicamentos, tanto genéricos como de alta gama.</p>
+  <div class="brands-wrap">
+    <div class="brands-track" id="brt">
+      {# ── Logos reais em /static/img/brands/ ── #}
+      {% set marcas = [
+        ('Engystol',      '/buscar?q=engystol',      'engystol.svg'),
+        ('Enterogermina', '/buscar?q=enterogermina', 'Enterogermina.svg'),
+        ("Pond's",        '/buscar?q=ponds',         'Ponds.svg'),
+        ('Nivea',         '/buscar?q=nivea',         'nivea.svg'),
+        ('Eucerin',       '/buscar?q=eucerin',       'Eucerin.svg'),
+        ('Genfar',        '/buscar?q=genfar',        'Genfar.svg'),
+        ('La Santé',      '/buscar?q=sante',         'lasante.svg'),
+        ('MK',            '/buscar?q=mk',            'mk.svg')
+      ] %}
+      {% for nome, link, logo in marcas %}
+      <a class="brand-item" href="{{ link }}">
+        <div class="brand-ico">
+          <img src="/static/img/brands/{{ logo }}"
+               alt="Logo {{ nome }}"
+               loading="lazy">
+        </div>
+        <span class="brand-lbl">{{ nome }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="brands-dots" id="brd"></div>
+  </div>
+
+
+
+  <!-- PRODUCTOS DEL MES -->
+  <div class="sec-hdr" style="margin-top:8px"><h2>🗓️ Productos del mes</h2><a class="sec-link" href="/buscar?q=">Ver todos ›</a></div>
+  <div class="promo-grid">
+    {% set prods = produtos_mes if produtos_mes else [] %}
+    {% for p in prods[:4] %}{% include "_promo_card.html" %}{% endfor %}
+    {% for i in range(4 - prods[:4]|length) %}
+    <div class="promo-empty"><div style="font-size:2rem;opacity:.3">💊</div><span>Producto próximamente</span></div>
+    {% endfor %}
+  </div>
+
+  <!-- BENEFICIOS -->
+  <div class="bene-grid">
+    <div class="bene-card"><div class="bene-ico">🎧</div><h3>Atención al cliente</h3><div class="bene-sub">Domingo a Domingo</div><p>Sabemos que tu bienestar no descansa. Por eso te acompañamos todos los días, siempre listos para ayudarte.</p></div>
+    <div class="bene-card"><div class="bene-ico">💰</div><h3>Compara precios</h3><div class="bene-sub">entre productos</div><p>Compara precios y domicilios de droguerías cercanas fácilmente, asegurando siempre la mejor oferta.</p></div>
+    <div class="bene-card"><div class="bene-ico">🗂️</div><h3>Amplio portafolio</h3><div class="bene-sub">para toda necesidad</div><p>Medicamentos, cuidado personal, belleza, bebé y más, todo de calidad y a un clic.</p></div>
+    <div class="bene-card"><div class="bene-ico">🚚</div><h3>Entrega segura</h3><div class="bene-sub">confiable y rápida</div><p>Con el respaldo de Coopidrogas y Farmacenter, líderes en productos farmacéuticos de calidad en Colombia.</p></div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleCatList(btn){
+  const sub=btn.parentElement.nextElementSibling;
+  const open=sub.classList.contains('on');
+  document.querySelectorAll('.cat-sub.on').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.cat-toggle.on').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.cat-toggle').forEach(t=>t.setAttribute('aria-expanded','false'));
+  if(!open){
+    sub.classList.add('on');
+    btn.classList.add('on');
+    btn.setAttribute('aria-expanded','true');
+  }
+}
+
+// ── CATEGORIES CAROUSEL — auto-scroll + touch feedback (mobile only) ──
+(function(){
+  // Use matchMedia instead of innerWidth for reliable mobile detection
+  var mq = window.matchMedia('(max-width: 540px)');
+  if(!mq.matches) return;
+
+  var row = document.getElementById('homeCatsRow');
+  var dots = document.querySelectorAll('#homeCatsDots .hc-dot');
+  if(!row || !dots.length) return;
+
+  var totalPages = 2;
+  var currentPage = 0;
+  var autoTimer = null;
+  var userTouching = false;
+
+  function getScrollEnd(){ return row.scrollWidth - row.clientWidth; }
+
+  function goToPage(page){
+    currentPage = page < 0 ? 0 : page >= totalPages ? totalPages-1 : page;
+    row.scrollTo({ left: currentPage === 0 ? 0 : getScrollEnd(), behavior: 'smooth' });
+    updateDots();
+  }
+
+  function updateDots(){
+    for(var i=0; i<dots.length; i++){
+      dots[i].classList.toggle('on', i === currentPage);
+    }
+  }
+
+  // Auto-advance
+  function startAuto(){
+    stopAuto();
+    autoTimer = setInterval(function(){
+      currentPage = (currentPage + 1) % totalPages;
+      goToPage(currentPage);
+    }, 3500);
+  }
+  function stopAuto(){ if(autoTimer){clearInterval(autoTimer); autoTimer=null;} }
+
+  // Dot clicks
+  for(var i=0; i<dots.length; i++){
+    (function(idx){
+      dots[idx].addEventListener('click', function(){
+        stopAuto();
+        goToPage(idx);
+        setTimeout(startAuto, 5000);
+      });
+    })(i);
+  }
+
+  // Scroll detection → update dots
+  var scrollT;
+  row.addEventListener('scroll', function(){
+    clearTimeout(scrollT);
+    scrollT = setTimeout(function(){
+      var maxS = getScrollEnd();
+      if(maxS > 0){
+        currentPage = row.scrollLeft > maxS * 0.35 ? 1 : 0;
+      }
+      updateDots();
+    }, 80);
+  }, { passive: true });
+
+  // Touch events: pause auto + visual feedback
+  row.addEventListener('touchstart', function(){
+    userTouching = true;
+    stopAuto();
+  }, { passive: true });
+
+  row.addEventListener('touchend', function(){
+    userTouching = false;
+    setTimeout(function(){ if(!userTouching) startAuto(); }, 5000);
+  }, { passive: true });
+
+  // Touch feedback on individual items (persistent highlight for 200ms)
+  var catItems = row.querySelectorAll('.home-cat-item');
+  for(var j=0; j<catItems.length; j++){
+    (function(el){
+      el.addEventListener('touchstart', function(){ el.classList.add('touched'); }, {passive:true});
+      el.addEventListener('touchend', function(){
+        setTimeout(function(){ el.classList.remove('touched'); }, 200);
+      }, {passive:true});
+      el.addEventListener('touchcancel', function(){ el.classList.remove('touched'); }, {passive:true});
+    })(catItems[j]);
+  }
+
+  // Init
+  startAuto();
+})();
+</script>
+{% endblock %}

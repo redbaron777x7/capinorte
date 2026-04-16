@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <rect width="200" height="80" fill="#fff" rx="8"/>
+  <!-- Simplified Sanofi purple -->
+  <text x="100" y="52" font-family="Arial,sans-serif" font-size="30" fill="#7B2D8B" text-anchor="middle" font-weight="bold" letter-spacing="1">sanofi</text>
+</svg>

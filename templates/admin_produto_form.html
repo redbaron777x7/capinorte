@@ -1,0 +1,136 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if p else 'Nuevo' }} Producto{% endblock %}
+{% block page_title %}{{ 'Editar' if p else 'Nuevo' }} Producto{% endblock %}
+
+{% block extra_css %}
+<style>
+@media(max-width:600px){
+  .prod-form-panel{max-width:100% !important;padding:0}
+  .prod-form-checks{flex-direction:column;gap:10px !important}
+  .prod-form-btns{flex-direction:column}
+  .prod-form-btns .btn{width:100%;justify-content:center}
+  .img-prev{width:100%;height:auto;max-height:120px}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="panel prod-form-panel" style="max-width:900px">
+  <div class="panel-body">
+    <form method="post">
+      <div class="form-row">
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Nombre del producto *</label>
+          <input class="form-control" name="nome" required value="{{ p.nome if p else '' }}" placeholder="Ej: Ibuprofeno 400mg Genfar Caja x 10 Tabletas">
+        </div>
+        <div class="form-group">
+          <label>Marca</label>
+          <input class="form-control" name="marca" value="{{ p.marca if p else '' }}" placeholder="Ej: Genfar">
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select class="form-control" name="categoria" id="cat-select" onchange="toggleCatCustom(this)">
+            <option value="">— Seleccionar categoría —</option>
+            {% for c in categorias %}
+            <option value="{{ c.categoria }}"
+              {% if p and p.categoria == c.categoria %}selected{% endif %}>
+              {{ c.categoria }}
+            </option>
+            {% endfor %}
+            <option value="__nueva__"
+              {% if p and p.categoria and p.categoria not in categorias|map(attribute='categoria')|list %}selected{% endif %}>
+              ✏️ Otra / Nueva categoría…
+            </option>
+          </select>
+          <input class="form-control" id="cat-custom" name="categoria_custom"
+            placeholder="Escribe el nombre de la nueva categoría"
+            style="margin-top:6px;display:{% if p and p.categoria and p.categoria not in categorias|map(attribute='categoria')|list %}block{% else %}none{% endif %}"
+            value="{% if p and p.categoria and p.categoria not in categorias|map(attribute='categoria')|list %}{{ p.categoria }}{% endif %}">
+        </div>
+        <div class="form-group">
+          <label>Precio (COP $)</label>
+          <input class="form-control" name="preco_cop" type="number" step="0.01"
+                 value="{{ p.preco_cop if p else '' }}" placeholder="Ej: 15000">
+        </div>
+        <div class="form-group">
+          <label>Precio lista / antes (COP $)</label>
+          <input class="form-control" name="preco_lista_cop" type="number" step="0.01"
+                 value="{{ p.preco_lista_cop if p else '' }}" placeholder="Ej: 20000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea class="form-control" name="descricao" rows="5" placeholder="Descripción del producto...">{{ p.descricao if p else '' }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>URL imagen 1 (principal)</label>
+          <input class="form-control" name="imagem_1" id="img1" value="{{ p.imagem_1 if p else '' }}"
+                 placeholder="https://..." oninput="prev(this,'pv1')">
+          {% if p and p.imagem_1 %}<img id="pv1" src="{{ p.imagem_1 }}" class="img-prev" style="margin-top:8px">{% else %}<img id="pv1" style="display:none;margin-top:8px" class="img-prev">{% endif %}
+        </div>
+        <div class="form-group">
+          <label>URL imagen 2</label>
+          <input class="form-control" name="imagem_2" value="{{ p.imagem_2 if p else '' }}"
+                 placeholder="https://..." oninput="prev(this,'pv2')">
+          {% if p and p.imagem_2 %}<img id="pv2" src="{{ p.imagem_2 }}" class="img-prev" style="margin-top:8px">{% else %}<img id="pv2" style="display:none;margin-top:8px" class="img-prev">{% endif %}
+        </div>
+        <div class="form-group">
+          <label>URL imagen 3</label>
+          <input class="form-control" name="imagem_3" value="{{ p.imagem_3 if p else '' }}"
+                 placeholder="https://..." oninput="prev(this,'pv3')">
+          {% if p and p.imagem_3 %}<img id="pv3" src="{{ p.imagem_3 }}" class="img-prev" style="margin-top:8px">{% else %}<img id="pv3" style="display:none;margin-top:8px" class="img-prev">{% endif %}
+        </div>
+      </div>
+
+      <div class="prod-form-checks" style="display:flex;gap:20px;margin-bottom:20px">
+        <label class="form-check">
+          <input type="checkbox" name="ativo" {% if not p or p.ativo %}checked{% endif %}>
+          Producto activo (visible en tienda)
+        </label>
+        <label class="form-check">
+          <input type="checkbox" name="destaque" {% if p and p.destaque %}checked{% endif %}>
+          ⭐ Producto destacado (aparece en inicio)
+        </label>
+      </div>
+
+      <div class="prod-form-btns" style="display:flex;gap:10px">
+        <button class="btn btn-verde" type="submit">💾 Guardar producto</button>
+        <a class="btn btn-gris" href="/admin/produtos">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function prev(input, imgId) {
+  const img = document.getElementById(imgId);
+  if(input.value.startsWith('http')){img.src=input.value;img.style.display='block'}
+  else img.style.display='none';
+}
+function toggleCatCustom(sel){
+  const custom = document.getElementById('cat-custom');
+  if(sel.value === '__nueva__'){
+    custom.style.display = 'block';
+    custom.focus();
+  } else {
+    custom.style.display = 'none';
+    custom.value = '';
+  }
+}
+// Pre-submit: se __nueva__, copia o valor do campo custom para o select
+document.querySelector('form').addEventListener('submit', function(){
+  const sel = document.getElementById('cat-select');
+  const custom = document.getElementById('cat-custom');
+  if(sel.value === '__nueva__' && custom.value.trim()){
+    // Cria option temporária e seleciona
+    const opt = new Option(custom.value.trim(), custom.value.trim(), true, true);
+    sel.add(opt);
+    sel.value = custom.value.trim();
+    custom.name = ''; // evita envio duplicado
+  }
+});
+</script>
+{% endblock %}

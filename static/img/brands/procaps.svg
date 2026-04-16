@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <rect width="200" height="80" fill="#fff" rx="8"/>
+  <!-- Procaps orange -->
+  <text x="100" y="52" font-family="Arial Black,Arial,sans-serif" font-size="22" fill="#E8641E" text-anchor="middle" font-weight="900" letter-spacing="1">PROCAPS</text>
+</svg>

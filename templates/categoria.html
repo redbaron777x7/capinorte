@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block search_val %}{{ busca }}{% endblock %}
+
+{% block content %}
+<div class="container cat-page-wrap">
+
+  <!-- BREADCRUMB -->
+  <nav class="cat-breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Inicio</a>
+    <span>›</span>
+    <span>{{ categoria_atual }}</span>
+  </nav>
+
+  <!-- HEADER DA CATEGORIA -->
+  <div class="cat-header">
+    <div class="cat-header-info">
+      <h1 class="cat-title">{{ categoria_atual }}</h1>
+      <p class="cat-count">
+        {% if total == 0 %}
+          Sin productos
+        {% elif total == 1 %}
+          1 producto encontrado
+        {% else %}
+          {{ total }} productos encontrados
+        {% endif %}
+        {% if busca %}— buscando "<strong>{{ busca }}</strong>"{% endif %}
+      </p>
+    </div>
+    <!-- BUSCA DENTRO DA CATEGORIA -->
+    <form class="cat-search-form" method="get" action="">
+      <input type="hidden" name="p" value="1">
+      <div class="cat-search-inner">
+        <input type="text" name="q" value="{{ busca }}"
+               placeholder="Buscar en {{ categoria_atual }}..."
+               class="cat-search-input" autocomplete="off">
+        {% if busca %}
+        <a href="/categoria/{{ categoria_atual|urlencode }}" class="cat-search-clear" title="Limpiar búsqueda">✕</a>
+        {% endif %}
+        <button type="submit" class="cat-search-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--red)">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+
+  {% if produtos %}
+
+  <!-- PAGINAÇÃO TOPO (info + navegação) -->
+  {% if pages > 1 %}
+  <div class="pag-bar pag-bar-top">
+    <span class="pag-info">Página {{ page }} de {{ pages }}</span>
+    {% include "_paginacao.html" %}
+  </div>
+  {% endif %}
+
+  <!-- GRID DE PRODUTOS -->
+  <div class="grid-produtos cat-grid">
+    {% for p in produtos %}{% include "_card.html" %}{% endfor %}
+  </div>
+
+  <!-- PAGINAÇÃO BAIXO (completa) -->
+  {% if pages > 1 %}
+  <div class="pag-bar pag-bar-bottom">
+    <span class="pag-info">
+      Mostrando {{ ((page-1)*limit)+1 }}–{{ [page*limit, total]|min }} de {{ total }} productos
+    </span>
+    {% include "_paginacao.html" %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <!-- ESTADO VAZIO -->
+  <div class="cat-empty">
+    <div class="cat-empty-icon">🔍</div>
+    <h2>Sin resultados</h2>
+    {% if busca %}
+    <p>No encontramos productos para "<strong>{{ busca }}</strong>" en esta categoría.</p>
+    <a href="/categoria/{{ categoria_atual|urlencode }}" class="cat-empty-btn">Ver todos los productos</a>
+    {% else %}
+    <p>Esta categoría aún no tiene productos. ¡Consúltanos por WhatsApp!</p>
+    <a href="https://wa.me/{{ config.get('whatsapp','573022133390') }}" class="cat-empty-btn wpp" target="_blank">
+      📲 Pedir por WhatsApp
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   PÁGINA DE CATEGORÍA — ESTILOS COMPLETOS
+   ══════════════════════════════════════════════════════════ */
+.cat-page-wrap{ padding-top:18px; padding-bottom:48px; }
+
+/* Breadcrumb */
+.cat-breadcrumb{
+  display:flex; align-items:center; gap:6px;
+  font-size:.8rem; color:var(--txt3); margin-bottom:16px;
+}
+.cat-breadcrumb a{ color:var(--red); text-decoration:none; font-weight:600; }
+.cat-breadcrumb a:hover{ text-decoration:underline; }
+.cat-breadcrumb span{ color:var(--txt3); }
+
+/* Header */
+.cat-header{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  flex-wrap:wrap; gap:14px; margin-bottom:18px;
+}
+.cat-title{ font-size:1.5rem; font-weight:900; color:var(--txt); margin:0 0 4px; }
+.cat-count{ font-size:.85rem; color:var(--txt3); margin:0; }
+
+/* Busca dentro da categoria */
+.cat-search-form{ flex-shrink:0; }
+.cat-search-inner{
+  display:flex; align-items:center;
+  border:1.5px solid var(--border); border-radius:40px;
+  background:#fff; overflow:hidden; width:260px;
+  box-shadow:0 1px 6px rgba(0,0,0,.06);
+  transition:border-color .2s;
+}
+.cat-search-inner:focus-within{ border-color:var(--red); }
+.cat-search-input{
+  flex:1; border:none; outline:none; padding:9px 14px;
+  font-size:.85rem; font-family:var(--font); background:transparent;
+  color:var(--txt);
+}
+.cat-search-clear{
+  padding:0 8px; color:var(--txt3); text-decoration:none;
+  font-size:.85rem; line-height:1;
+}
+.cat-search-btn{
+  background:none; border:none; padding:8px 14px 8px 6px;
+  cursor:pointer; display:flex; align-items:center;
+}
+
+/* Barra de subcategorias */
+.cat-subcat-bar{
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-bottom:22px; padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.cat-pill{
+  padding:5px 14px; border-radius:20px;
+  border:1.5px solid var(--border); background:#fff;
+  font-size:.8rem; font-weight:600; color:var(--txt2);
+  text-decoration:none; transition:all .18s;
+  white-space:nowrap;
+}
+.cat-pill:hover{ border-color:var(--red); color:var(--red); background:var(--red-light); }
+.cat-pill.active{ border-color:var(--red); background:var(--red); color:#fff; }
+
+/* Grid */
+.cat-grid{ margin-bottom:20px; }
+
+/* ── PAGINAÇÃO ────────────────────────────────────────────── */
+.pag-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:10px; padding:12px 0;
+}
+.pag-bar-top{ border-bottom:1px solid var(--border); margin-bottom:18px; }
+.pag-bar-bottom{ border-top:1px solid var(--border); margin-top:24px; }
+.pag-info{ font-size:.82rem; color:var(--txt3); }
+
+/* A paginação reutiliza os estilos globais .paginacao do base.html */
+/* mas garantimos aqui para o caso de não existir */
+.paginacao{
+  display:flex; align-items:center; gap:4px; flex-wrap:wrap;
+}
+.paginacao a, .paginacao span{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:34px; height:34px; padding:0 10px;
+  border-radius:8px; font-size:.85rem; font-weight:700;
+  text-decoration:none; transition:all .17s;
+  border:1.5px solid var(--border); background:#fff; color:var(--txt2);
+}
+.paginacao a:hover{ border-color:var(--red); color:var(--red); background:var(--red-light); }
+.paginacao span.ativo{
+  background:var(--red); color:#fff; border-color:var(--red);
+}
+.paginacao span.ellipsis{
+  border:none; background:transparent; min-width:20px;
+}
+
+/* Estado vazio */
+.cat-empty{
+  text-align:center; padding:72px 20px; color:var(--txt3);
+}
+.cat-empty-icon{ font-size:4rem; margin-bottom:16px; }
+.cat-empty h2{ font-size:1.15rem; color:var(--txt); margin:0 0 8px; }
+.cat-empty p{ font-size:.9rem; max-width:380px; margin:0 auto 20px; }
+.cat-empty-btn{
+  display:inline-block; padding:10px 24px;
+  background:var(--red); color:#fff;
+  border-radius:40px; font-weight:800; font-size:.9rem;
+  text-decoration:none; transition:opacity .2s;
+}
+.cat-empty-btn:hover{ opacity:.85; }
+.cat-empty-btn.wpp{ background:#25D366; }
+
+/* Responsive */
+@media(max-width:700px){
+  .cat-header{ flex-direction:column; }
+  .cat-search-inner{ width:100%; }
+  .cat-search-form{ width:100%; }
+  .cat-title{ font-size:1.2rem; }
+  .cat-subcat-bar{ gap:6px; }
+  .cat-pill{ font-size:.75rem; padding:4px 10px; }
+  .pag-bar{ justify-content:center; }
+  .pag-info{ width:100%; text-align:center; }
+}
+</style>
+{% endblock %}

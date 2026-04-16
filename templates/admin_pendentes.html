@@ -1,0 +1,481 @@
+{% extends "admin_base.html" %}
+{% block title %}Productos Pendientes{% endblock %}
+{% block page_title %}
+  ⚠️ Productos Pendientes
+  <span style="font-size:.75rem;color:#888;font-weight:400">({{ total_geral }} en total)</span>
+  <button onclick="abrirModalLimpar()"
+    style="margin-left:16px;padding:6px 14px;background:#fee2e2;color:#c1121f;border:1.5px solid #fca5a5;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.15s"
+    onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+    🗑️ Borrar todos los precios
+  </button>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.filtros-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.filtro-btn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;background:#fff;color:#555;font-size:.8rem;font-weight:700;cursor:pointer;text-decoration:none;transition:.15s}
+.filtro-btn:hover{border-color:var(--verde);color:var(--verde)}
+.filtro-btn.on{background:var(--verde);color:#fff;border-color:var(--verde)}
+.search-wrap{flex:1;max-width:340px;position:relative}
+.search-wrap input{width:100%;padding:7px 12px 7px 34px;border:1.5px solid #ddd;border-radius:8px;font-size:.85rem;outline:none;transition:.15s}
+.search-wrap input:focus{border-color:var(--verde)}
+.search-wrap .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.9rem;color:#aaa}
+.badge-tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:.7rem;font-weight:800;line-height:1.4}
+.badge-sem-desc{background:#fff3cd;color:#856404}
+.badge-sem-precio{background:#f8d7da;color:#842029}
+.badge-ok{background:#d1e7dd;color:#155724}
+.prod-img{width:52px;height:52px;object-fit:contain;border-radius:6px;background:#f5f5f5}
+.prod-img-ph{width:52px;height:52px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.btn-editar{background:#e8f5ee;color:var(--verde);border:none;padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;transition:.15s}
+.btn-editar:hover{background:var(--verde);color:#fff}
+.row-ok td{opacity:.45;text-decoration:line-through}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.modal-box{background:#fff;border-radius:14px;width:100%;max-width:520px;box-shadow:0 12px 40px rgba(0,0,0,.18);overflow:hidden}
+.modal-head{padding:18px 22px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:1rem;font-weight:800;color:#222}
+.modal-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;line-height:1}
+.modal-body{padding:22px}
+.modal-foot{padding:14px 22px;border-top:1px solid #f0f0f0;display:flex;gap:10px;justify-content:flex-end}
+.alert-msg{padding:10px 14px;border-radius:8px;font-size:.83rem;font-weight:600;margin-bottom:14px;display:none}
+.alert-msg.show{display:block}
+.alert-success{background:#d1fae5;color:#064e3b}
+.alert-error{background:#fee2e2;color:#991b1b}
+.spinner{display:inline-block;width:14px;height:14px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.char-count{font-size:.72rem;color:#999;text-align:right;margin-top:3px}
+
+/* Paginação */
+.pags{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.pags a,.pags span{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 8px;border-radius:6px;font-size:.82rem;font-weight:700;background:#fff;color:#555;border:1px solid #e0e0e0;text-decoration:none;transition:.15s}
+.pags a:hover,.pags .on{background:var(--verde);color:#fff;border-color:var(--verde)}
+
+.empty-state{text-align:center;padding:60px 20px;color:#888}
+.empty-state .ico{font-size:3rem;margin-bottom:14px}
+
+/* ── MOBILE: tabela vira cards ── */
+@media(max-width:680px){
+  /* Filtros em coluna */
+  .filtros-bar form{flex-direction:column;gap:8px}
+  .search-wrap{max-width:100%}
+
+  /* Esconde tabela e mostra cards */
+  #tabla-pendentes{display:none}
+
+  /* Cards de produto */
+  .mob-card{
+    display:flex;gap:12px;align-items:flex-start;
+    background:#fff;border-radius:10px;
+    padding:12px;margin-bottom:10px;
+    box-shadow:0 1px 6px rgba(0,0,0,.07);
+    border:1px solid #f0f0f0;
+  }
+  .mob-card-img{width:56px;height:56px;object-fit:contain;border-radius:6px;background:#f5f5f5;flex-shrink:0}
+  .mob-card-body{flex:1;min-width:0}
+  .mob-card-name{font-weight:700;color:#222;font-size:.85rem;margin-bottom:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mob-card-name a{color:var(--verde);text-decoration:none}
+  .mob-card-meta{font-size:.72rem;color:#888;margin-bottom:6px}
+  .mob-card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+  .mob-card-actions{display:flex;gap:8px}
+  .mob-card-actions button{flex:1;padding:7px;font-size:.78rem;border-radius:6px;
+    background:#e8f5ee;color:var(--verde);border:none;font-weight:700;cursor:pointer}
+  .mob-card-actions button:hover{background:var(--verde);color:#fff}
+
+  /* Esconde section de cards no desktop */
+  #mob-cards-list{display:block}
+
+  /* Modal full-width no mobile */
+  .modal-bg{align-items:flex-end}
+  .modal-box{border-bottom-left-radius:0;border-bottom-right-radius:0;max-width:100% !important;margin:0;border-radius:16px 16px 0 0}
+
+  /* Botão borrar oculta texto */
+  .btn-borrar-txt{display:none}
+}
+@media(min-width:681px){
+  #mob-cards-list{display:none}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- FILTROS E BUSCA -->
+<div class="filtros-bar">
+  <form method="get" action="/admin/pendentes" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%">
+    <div class="search-wrap">
+      <span class="ico">🔍</span>
+      <input type="text" name="q" placeholder="Buscar por nombre, marca, SKU…" value="{{ busca }}">
+    </div>
+    <input type="hidden" name="filtro" id="filtro-hidden" value="{{ filtro }}">
+    <a href="/admin/pendentes?filtro=todos{% if busca %}&q={{ busca }}{% endif %}"
+       class="filtro-btn {% if filtro=='todos' %}on{% endif %}">Todos</a>
+    <a href="/admin/pendentes?filtro=sem_desc{% if busca %}&q={{ busca }}{% endif %}"
+       class="filtro-btn {% if filtro=='sem_desc' %}on{% endif %}">Sin descripción</a>
+    <a href="/admin/pendentes?filtro=sem_precio{% if busca %}&q={{ busca }}{% endif %}"
+       class="filtro-btn {% if filtro=='sem_precio' %}on{% endif %}">Sin precio</a>
+    <button type="submit" class="btn btn-verde">Buscar</button>
+    {% if busca or filtro != 'todos' %}
+    <a href="/admin/pendentes" class="btn btn-gris">Limpiar</a>
+    {% endif %}
+  </form>
+</div>
+
+<!-- CONTADOR -->
+<div style="font-size:.82rem;color:#666;margin-bottom:12px">
+  Mostrando <strong>{{ produtos|length }}</strong> de <strong>{{ total }}</strong> productos pendientes
+  {% if filtro != 'todos' %} (filtro: <strong>{{ filtro }}</strong>){% endif %}
+</div>
+
+<!-- TABLA -->
+{% if produtos %}
+<div class="panel">
+  <div class="panel-body" style="padding:0">
+    <table class="table" id="tabla-pendentes">
+      <thead>
+        <tr>
+          <th style="width:60px">Img</th>
+          <th>Nombre / SKU</th>
+          <th>Marca</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th>Revisado</th>
+          <th style="width:80px">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in produtos %}
+        {% set sin_desc = not p.descricao or not p.descricao.strip() %}
+        {% set sin_precio = p.preco_cop is none or p.preco_cop <= 0 %}
+        <tr id="row-{{ p.id }}">
+          <td>
+            {% if p.imagem_1 %}
+            <img src="{{ p.imagem_1 }}" class="prod-img" onerror="this.src='/static/img/no-img.png'" loading="lazy">
+            {% else %}
+            <div class="prod-img-ph">💊</div>
+            {% endif %}
+          </td>
+          <td>
+            <div style="font-weight:700;color:#222;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              <a href="/admin/produto/{{ p.id }}/editar"
+                 style="color:var(--verde);text-decoration:none;font-weight:700"
+                 title="Editar produto"
+                 target="_blank">{{ p.nome }}</a>
+            </div>
+            {% if p.sku %}<div style="font-size:.72rem;color:#aaa">SKU: {{ p.sku }}</div>{% endif %}
+            <div style="font-size:.72rem;color:#bbb">ID: {{ p.id }}</div>
+          </td>
+          <td>{{ p.marca or '—' }}</td>
+          <td>{{ p.categoria or '—' }}</td>
+          <td>
+            {% if sin_precio %}
+              <span style="color:#c1121f;font-weight:700">Sin precio</span>
+            {% else %}
+              <span style="font-weight:700;color:#166534">${{ '{:,.0f}'.format(p.preco_cop) }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if sin_desc %}
+              <span class="badge-tag badge-sem-desc">Sin descripción</span>
+            {% else %}
+              <span class="badge-tag badge-ok">✓ Desc.</span>
+            {% endif %}
+            {% if sin_precio %}
+              <span class="badge-tag badge-sem-precio">Sin precio</span>
+            {% endif %}
+          </td>
+          <td style="font-size:.72rem;color:#aaa">
+            {% if p.revisado_em %}{{ p.revisado_em[:16] }}{% else %}—{% endif %}
+          </td>
+          <td>
+            <button class="btn-editar"
+              onclick="abrirModal({{ p.id }}, '{{ p.nome|replace("'","\\'")|replace('"','\\"') }}', {{ p.preco_cop or 0 }}, `{{ (p.descricao or '')|replace('`','\\`') }}`)"
+            >✏️ Editar</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CARDS MOBILE (visível só em telas pequenas) -->
+<div id="mob-cards-list">
+  {% for p in produtos %}
+  {% set sin_desc = not p.descricao or not p.descricao.strip() %}
+  {% set sin_precio = p.preco_cop is none or p.preco_cop <= 0 %}
+  <div class="mob-card" id="mob-row-{{ p.id }}">
+    {% if p.imagem_1 %}
+    <img src="{{ p.imagem_1 }}" class="mob-card-img" onerror="this.src='/static/img/no-img.png'" loading="lazy">
+    {% else %}
+    <div class="mob-card-img" style="display:flex;align-items:center;justify-content:center;font-size:1.6rem">💊</div>
+    {% endif %}
+    <div class="mob-card-body">
+      <div class="mob-card-name">
+        <a href="/admin/produto/{{ p.id }}/editar" target="_blank">{{ p.nome[:55] }}{% if p.nome|length>55 %}…{% endif %}</a>
+      </div>
+      <div class="mob-card-meta">
+        {% if p.marca %}{{ p.marca }} · {% endif %}{{ p.categoria or '' }}
+        {% if p.sku %} · SKU: {{ p.sku }}{% endif %}
+      </div>
+      <div class="mob-card-tags">
+        {% if sin_desc %}<span class="badge-tag badge-sem-desc">Sin descripción</span>{% endif %}
+        {% if sin_precio %}<span class="badge-tag badge-sem-precio">Sin precio</span>{% else %}<span style="font-size:.75rem;color:#166534;font-weight:700">${{ '{:,.0f}'.format(p.preco_cop) }}</span>{% endif %}
+      </div>
+      <div class="mob-card-actions">
+        <button onclick="abrirModal({{ p.id }}, '{{ p.nome|replace("'","\\'") }}', {{ p.preco_cop or 0 }}, `{{ (p.descricao or '')|replace('`','\\`') }}`)">
+          ✏️ Editar
+        </button>
+        <a href="/admin/produto/{{ p.id }}/editar" target="_blank"
+           style="flex:1;padding:7px;text-align:center;font-size:.78rem;border-radius:6px;background:#f0f0f0;color:#555;text-decoration:none;font-weight:700">
+          🔗 Ver ficha
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- PAGINAÇÃO -->
+{% if pages > 1 %}
+<div class="pags">
+  {% if page > 1 %}<a href="?p={{ page-1 }}&q={{ busca }}&filtro={{ filtro }}">‹</a>{% endif %}
+  {% for i in range(1, pages+1) %}
+    {% if i == page %}
+      <span class="on">{{ i }}</span>
+    {% elif i == 1 or i == pages or (i >= page-2 and i <= page+2) %}
+      <a href="?p={{ i }}&q={{ busca }}&filtro={{ filtro }}">{{ i }}</a>
+    {% elif i == page-3 or i == page+3 %}
+      <span>…</span>
+    {% endif %}
+  {% endfor %}
+  {% if page < pages %}<a href="?p={{ page+1 }}&q={{ busca }}&filtro={{ filtro }}">›</a>{% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <div class="ico">✅</div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#374151;margin-bottom:6px">¡Sin pendientes!</h3>
+  <p>Todos los productos tienen descripción y precio completos.</p>
+  <a href="/admin/produtos" class="btn btn-verde" style="margin-top:14px">Ver todos los productos</a>
+</div>
+{% endif %}
+
+<!-- MODAL DE EDIÇÃO -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-titulo">Editar producto</h3>
+      <button class="modal-close" onclick="cerrarModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="alert-msg alert-success" id="msg-ok"></div>
+      <div class="alert-msg alert-error" id="msg-err"></div>
+
+      <div class="form-group">
+        <label>💰 Precio (COP)</label>
+        <input type="number" id="m-precio" class="form-control" placeholder="Ej: 15000" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>📝 Descripción <span style="color:#c1121f">*</span></label>
+        <textarea id="m-desc" class="form-control" rows="5"
+          placeholder="Descripción del producto, usos, composición, presentación…"
+          oninput="document.getElementById('char-count').textContent=this.value.length+' caracteres'"></textarea>
+        <div class="char-count" id="char-count">0 caracteres</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-gris" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-verde" id="btn-guardar" onclick="guardar()">
+        💾 Guardar
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let _pid = null;
+
+function abrirModal(pid, nome, precio, desc){
+  _pid = pid;
+  document.getElementById('modal-titulo').textContent = '✏️ ' + nome;
+  document.getElementById('m-precio').value = precio && precio > 0 ? precio : '';
+  document.getElementById('m-desc').value = desc || '';
+  document.getElementById('char-count').textContent = (desc||'').length + ' caracteres';
+  document.getElementById('msg-ok').classList.remove('show');
+  document.getElementById('msg-err').classList.remove('show');
+  document.getElementById('btn-guardar').disabled = false;
+  document.getElementById('btn-guardar').innerHTML = '💾 Guardar';
+  document.getElementById('modal-bg').classList.add('on');
+  setTimeout(()=>document.getElementById('m-desc').focus(), 100);
+}
+
+function cerrarModal(){
+  document.getElementById('modal-bg').classList.remove('on');
+  _pid = null;
+}
+
+function guardar(){
+  if(!_pid) return;
+  const desc  = document.getElementById('m-desc').value.trim();
+  const precio = document.getElementById('m-precio').value.trim();
+  const btn    = document.getElementById('btn-guardar');
+  const msgOk  = document.getElementById('msg-ok');
+  const msgErr = document.getElementById('msg-err');
+
+  // Reset
+  msgOk.classList.remove('show');
+  msgErr.classList.remove('show');
+
+  // Validação client-side
+  if(!desc){
+    msgErr.textContent = '❌ La descripción es obligatoria.';
+    msgErr.classList.add('show');
+    document.getElementById('m-desc').focus();
+    return;
+  }
+
+  // Loading
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Guardando…';
+
+  fetch(`/admin/pendentes/${_pid}/salvar`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({descricao: desc, preco_cop: precio || null})
+  })
+  .then(r=>r.json().then(d=>({ok:r.ok, data:d})))
+  .then(({ok, data})=>{
+    if(ok && data.ok){
+      msgOk.textContent = '✅ ' + data.msg;
+      msgOk.classList.add('show');
+      btn.innerHTML = '✅ Guardado';
+
+      // Remove linha da tabela após 1.2s se produto não é mais pendente
+      if(!data.ainda_pendente){
+        setTimeout(()=>{
+          const row = document.getElementById('row-'+ _pid);
+          if(row){
+            row.style.transition = 'opacity .4s, height .4s';
+            row.style.opacity = '0';
+            setTimeout(()=>{row.remove(); atualizarCont();}, 450);
+          }
+          setTimeout(cerrarModal, 1500);
+        }, 800);
+      } else {
+        // Produto ainda pendente — recarrega linha (refresh suave)
+        setTimeout(()=>location.reload(), 1200);
+      }
+    } else {
+      const erros = (data.erros || ['Error al guardar.']).join(' ');
+      msgErr.textContent = '❌ ' + erros;
+      msgErr.classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '💾 Guardar';
+    }
+  })
+  .catch(()=>{
+    msgErr.textContent = '❌ Error de conexión. Intenta de nuevo.';
+    msgErr.classList.add('show');
+    btn.disabled = false;
+    btn.innerHTML = '💾 Guardar';
+  });
+}
+
+function atualizarCont(){
+  fetch('/api/admin/pendentes/count')
+    .then(r=>r.json())
+    .then(d=>{
+      const b = document.getElementById('badge-pendentes');
+      if(b){
+        if(d.count > 0){
+          b.textContent = d.count > 99 ? '99+' : d.count;
+          b.style.display='inline-block';
+        } else {
+          b.style.display='none';
+        }
+      }
+    }).catch(()=>{});
+}
+
+// Fechar modal com ESC
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ cerrarModal(); cerrarModalLimpar(); } });
+</script>
+
+<!-- MODAL: CONFIRMAR BORRADO DE PRECIOS -->
+<div class="modal-bg" id="modal-limpar-bg" onclick="if(event.target===this)cerrarModalLimpar()">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-head" style="background:#fff5f5;border-bottom:1px solid #fca5a5">
+      <h3 style="color:#c1121f">🗑️ Borrar todos los precios</h3>
+      <button class="modal-close" onclick="cerrarModalLimpar()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:18px;font-size:2.2rem">⚠️</div>
+      <p style="font-weight:700;color:#222;margin-bottom:10px;text-align:center">¿Estás seguro?</p>
+      <p style="color:#555;font-size:.87rem;text-align:center;margin-bottom:16px">
+        Esta acción eliminará el precio de <strong>todos los productos activos</strong>.
+        Los productos aparecerán sin precio hasta que sean actualizados manualmente.<br><br>
+        <strong style="color:#c1121f">Esta acción no se puede deshacer.</strong>
+      </p>
+      <div id="limpar-resultado" class="alert-msg" style="text-align:center"></div>
+      <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 14px;font-size:.82rem;color:#856404">
+        💡 Usa la sección <strong>Pendientes</strong> para asignar nuevos precios producto a producto.
+      </div>
+    </div>
+    <div class="modal-foot" style="justify-content:center;gap:12px">
+      <button class="btn btn-gris" id="btn-limpar-cancelar" onclick="cerrarModalLimpar()">Cancelar</button>
+      <button class="btn btn-rojo" id="btn-limpar-confirmar" onclick="confirmarLimpar()"
+        style="background:#c1121f;color:#fff;border:none">
+        🗑️ Sí, borrar todos los precios
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function abrirModalLimpar(){
+  document.getElementById('limpar-resultado').className = 'alert-msg';
+  document.getElementById('limpar-resultado').textContent = '';
+  document.getElementById('btn-limpar-confirmar').disabled = false;
+  document.getElementById('btn-limpar-confirmar').innerHTML = '🗑️ Sí, borrar todos los precios';
+  document.getElementById('modal-limpar-bg').classList.add('on');
+}
+function cerrarModalLimpar(){
+  document.getElementById('modal-limpar-bg').classList.remove('on');
+}
+function confirmarLimpar(){
+  const btn = document.getElementById('btn-limpar-confirmar');
+  const res = document.getElementById('limpar-resultado');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Borrando…';
+  fetch('/admin/tools/limpar-precos', {method:'POST'})
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.ok){
+        res.className = 'alert-msg alert-success show';
+        res.textContent = '✅ ' + data.msg;
+        btn.innerHTML = '✅ Listo';
+        document.getElementById('btn-limpar-cancelar').textContent = 'Cerrar';
+        atualizarCont();
+        setTimeout(()=>location.reload(), 2000);
+      } else {
+        res.className = 'alert-msg alert-error show';
+        res.textContent = '❌ Error al borrar los precios.';
+        btn.disabled = false;
+        btn.innerHTML = '🗑️ Sí, borrar todos los precios';
+      }
+    })
+    .catch(()=>{
+      res.className = 'alert-msg alert-error show';
+      res.textContent = '❌ Error de conexión.';
+      btn.disabled = false;
+      btn.innerHTML = '🗑️ Sí, borrar todos los precios';
+    });
+}
+</script>
+{% endblock %}

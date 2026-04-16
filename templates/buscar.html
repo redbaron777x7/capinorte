@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block search_val %}{{ q }}{% endblock %}
+{% block content %}
+<div class="container cat-page-wrap">
+
+  <!-- BREADCRUMB -->
+  <nav class="cat-breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Inicio</a>
+    <span>›</span>
+    <span>Búsqueda</span>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="cat-header">
+    <div class="cat-header-info">
+      <h1 class="cat-title">
+        {% if q %}Resultados para "{{ q }}"{% else %}Todos los productos{% endif %}
+      </h1>
+      <p class="cat-count">
+        {% if total == 0 %}Sin productos{% elif total == 1 %}1 producto encontrado
+        {% else %}{{ total }} productos encontrados{% endif %}
+      </p>
+    </div>
+  </div>
+
+
+  {% if produtos %}
+
+  {% if pages > 1 %}
+  <div class="pag-bar pag-bar-top">
+    <span class="pag-info">Página {{ page }} de {{ pages }}</span>
+    {% include "_paginacao.html" %}
+  </div>
+  {% endif %}
+
+  <div class="grid-produtos cat-grid">
+    {% for p in produtos %}{% include "_card.html" %}{% endfor %}
+  </div>
+
+  {% if pages > 1 %}
+  <div class="pag-bar pag-bar-bottom">
+    <span class="pag-info">
+      Mostrando {{ ((page-1)*limit)+1 }}–{{ [page*limit, total]|min }} de {{ total }} productos
+    </span>
+    {% include "_paginacao.html" %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="cat-empty">
+    <div class="cat-empty-icon">🔍</div>
+    <h2>Sin resultados para "{{ q }}"</h2>
+    <p>No encontramos ese producto. ¡Pídelo directo por WhatsApp!</p>
+    <a href="https://wa.me/{{ config.get('whatsapp','573022133390') }}?text=Hola!+Busco:+{{ q|urlencode }}"
+       target="_blank" class="cat-empty-btn wpp">
+      📲 Preguntar por WhatsApp
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

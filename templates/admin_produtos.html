@@ -1,0 +1,162 @@
+{% extends "admin_base.html" %}
+{% block title %}Productos{% endblock %}
+{% block page_title %}Gestión de Productos ({{ total }}){% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Filtros responsivos ─────────────────────────── */
+.filtros-form{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filtros-form .form-control{flex:1;min-width:140px}
+.filtros-form select.form-control{min-width:160px}
+
+/* ── Cards mobile ────────────────────────────────── */
+@media(max-width:680px){
+  .filtros-form{flex-direction:column;align-items:stretch}
+  .filtros-form .form-control{width:100%}
+  .filtros-form select.form-control{width:100%}
+  #tab-produtos{display:none}
+  #mob-prod-list{display:block}
+}
+@media(min-width:681px){
+  #mob-prod-list{display:none}
+}
+.mob-prod-card{
+  display:flex;gap:12px;align-items:flex-start;
+  background:#fff;border-radius:10px;
+  padding:12px;margin-bottom:10px;
+  box-shadow:0 1px 6px rgba(0,0,0,.07);
+  border:1px solid #f0f0f0;
+}
+.mob-prod-card img{width:56px;height:56px;object-fit:contain;border-radius:6px;background:#f5f5f5;flex-shrink:0}
+.mob-prod-card .ph{width:56px;height:56px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+.mob-prod-body{flex:1;min-width:0}
+.mob-prod-name{font-weight:700;color:var(--verde);font-size:.85rem;text-decoration:none;display:block;margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mob-prod-meta{font-size:.72rem;color:#888;margin-bottom:6px}
+.mob-prod-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mob-prod-actions{display:flex;gap:6px}
+.mob-prod-actions a,.mob-prod-actions button{
+  padding:6px 10px;border-radius:6px;font-size:.75rem;font-weight:700;
+  text-decoration:none;cursor:pointer;border:none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- FILTROS -->
+<div class="panel" style="margin-bottom:16px">
+  <div class="panel-body" style="padding:14px 20px">
+    <form method="get" class="filtros-form">
+      <input class="form-control" name="q" value="{{ busca }}" placeholder="Buscar producto...">
+      <select class="form-control" name="cat">
+        <option value="">Todas las categorías</option>
+        {% for c in categorias %}
+        <option value="{{ c.categoria }}" {% if c.categoria==cat %}selected{% endif %}>{{ c.categoria }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-verde" type="submit">Filtrar</button>
+      {% if busca or cat %}<a class="btn btn-gris" href="/admin/produtos">Limpiar</a>{% endif %}
+      <a class="btn btn-verde" href="/admin/produto/novo">+ Nuevo</a>
+    </form>
+  </div>
+</div>
+
+<!-- TABELA (desktop) -->
+<div class="panel">
+  <div class="panel-body" style="padding:0;overflow-x:auto">
+    <table class="table" id="tab-produtos">
+      <thead>
+        <tr>
+          <th width="50">Img</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th width="120">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in produtos %}
+        <tr>
+          <td>
+            {% if p.imagem_1 %}
+            <img src="{{ p.imagem_1 }}" class="img-prev" onerror="this.style.display='none'">
+            {% else %}<span style="font-size:1.5rem">💊</span>{% endif %}
+          </td>
+          <td>
+            <a href="/admin/produto/{{ p.id }}/editar"
+               style="font-weight:700;font-size:.85rem;color:var(--verde);text-decoration:none">
+              {{ p.nome[:55] }}{% if p.nome|length>55 %}...{% endif %}
+            </a>
+            <div style="display:flex;gap:8px;margin-top:2px;align-items:center">
+              <span style="font-size:.75rem;color:#888">{{ p.marca }}</span>
+              <a href="/produto/{{ p.id }}" target="_blank" style="font-size:.68rem;color:#aaa;text-decoration:none">↗ ver</a>
+            </div>
+          </td>
+          <td style="font-size:.82rem">{{ p.categoria }}</td>
+          <td style="font-weight:800;color:var(--verde);font-size:.88rem">
+            {{ '$'+"{:,.0f}".format(p.preco_cop).replace(",",".") if p.preco_cop else '—' }}
+          </td>
+          <td>
+            {% if p.ativo %}<span class="badge badge-ok">Activo</span>{% else %}<span class="badge badge-off">Oculto</span>{% endif %}
+            {% if p.destaque %}<span class="badge" style="background:#fef3c7;color:#92400e;margin-left:3px">⭐</span>{% endif %}
+          </td>
+          <td>
+            <a class="btn btn-gris btn-sm" href="/admin/produto/{{ p.id }}/editar">✏️</a>
+            <form method="post" action="/admin/produto/{{ p.id }}/deletar" style="display:inline"
+                  onsubmit="return confirm('¿Ocultar este producto?')">
+              <button class="btn btn-rojo btn-sm">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CARDS MOBILE -->
+<div id="mob-prod-list">
+  {% for p in produtos %}
+  <div class="mob-prod-card">
+    {% if p.imagem_1 %}
+    <img src="{{ p.imagem_1 }}" onerror="this.style.display='none'" loading="lazy">
+    {% else %}<div class="ph">💊</div>{% endif %}
+    <div class="mob-prod-body">
+      <a href="/admin/produto/{{ p.id }}/editar" class="mob-prod-name">
+        {{ p.nome[:55] }}{% if p.nome|length>55 %}…{% endif %}
+      </a>
+      <div class="mob-prod-meta">
+        {{ p.marca or '' }}{% if p.categoria %} · {{ p.categoria }}{% endif %}
+        {% if p.preco_cop %} · <strong style="color:var(--verde)">${{ '{:,.0f}'.format(p.preco_cop) }}</strong>{% endif %}
+      </div>
+      <div class="mob-prod-row">
+        <div>
+          {% if p.ativo %}<span class="badge badge-ok">Activo</span>{% else %}<span class="badge badge-off">Oculto</span>{% endif %}
+          {% if p.destaque %}<span class="badge" style="background:#fef3c7;color:#92400e">⭐</span>{% endif %}
+        </div>
+        <div class="mob-prod-actions">
+          <a href="/admin/produto/{{ p.id }}/editar" style="background:var(--verde3);color:var(--verde)">✏️ Editar</a>
+          <a href="/produto/{{ p.id }}" target="_blank" style="background:#f0f0f0;color:#555">↗ Ver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- PAGINAÇÃO -->
+{% if pages > 1 %}
+<div class="paginacao" style="justify-content:flex-start;flex-wrap:wrap">
+  {% if page > 1 %}<a class="btn btn-gris" href="?p={{ page-1 }}&q={{ busca }}&cat={{ cat }}">‹</a>{% endif %}
+  {% for n in range(1, pages+1) %}
+    {% if n==page %}<span class="btn" style="background:var(--verde);color:#fff">{{ n }}</span>
+    {% elif n<=2 or n>=pages-1 or (n>=page-1 and n<=page+1) %}<a class="btn btn-gris" href="?p={{ n }}&q={{ busca }}&cat={{ cat }}">{{ n }}</a>
+    {% elif n==3 and page>4 %}<span class="btn btn-gris">…</span>
+    {% endif %}
+  {% endfor %}
+  {% if page < pages %}<a class="btn btn-gris" href="?p={{ page+1 }}&q={{ busca }}&cat={{ cat }}">›</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

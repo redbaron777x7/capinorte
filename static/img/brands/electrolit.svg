@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <rect width="200" height="80" fill="#fff" rx="8"/>
+  <rect x="10" y="28" width="180" height="26" rx="4" fill="#00539B"/>
+  <text x="100" y="47" font-family="Arial Black,Arial,sans-serif" font-size="20" fill="#fff" text-anchor="middle" font-weight="900" letter-spacing="1">Electrolit</text>
+</svg>

@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+
+{% block title %}Política de Envíos — {{ config.get('nome_farmacia','Capinorte') }}{% endblock %}
+
+{% block content %}
+<div class="wrap" style="padding-top:36px;padding-bottom:60px">
+
+  <!-- Breadcrumb -->
+  <nav class="bc" aria-label="Breadcrumb">
+    <a href="/">Inicio</a>
+    <span style="color:var(--border)">›</span>
+    <span>Política de Envíos</span>
+  </nav>
+
+  <!-- Card principal -->
+  <div class="legal-card">
+
+    <!-- Encabezado -->
+    <div class="legal-header" style="background:linear-gradient(135deg,#1a7a3e 0%,#0f5a2c 100%)">
+      <div class="legal-icon">🚚</div>
+      <div>
+        <h1 class="legal-title">Política de Envíos</h1>
+        <p class="legal-subtitle">CAPINORTE COLOMBIA S.A. · Ley 1480 de 2011 (Estatuto del Consumidor)</p>
+      </div>
+    </div>
+
+    <!-- Índice rápido -->
+    <div class="legal-toc">
+      <p class="legal-toc-title">Contenido</p>
+      <div class="legal-toc-grid">
+        <a href="#s1">1. Ámbito</a>
+        <a href="#s2">2. Cobertura</a>
+        <a href="#s3">3. Tiempos</a>
+        <a href="#s4">4. Costo</a>
+        <a href="#s5">5. Condiciones</a>
+        <a href="#s6">6. Intentos</a>
+        <a href="#s7">7. Responsabilidad</a>
+        <a href="#s8">8. Retrasos</a>
+        <a href="#s9">9. Especiales</a>
+        <a href="#s10">10. Seguimiento</a>
+        <a href="#s11">11. Cancelaciones</a>
+        <a href="#s12">12. Contacto</a>
+        <a href="#s13">13. Modificaciones</a>
+      </div>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="legal-body">
+
+      <!-- Intro -->
+      <section>
+        <div class="legal-highlight" style="background:#f0faf4;border-color:#1a7a3e">
+          <span class="legal-highlight-ico">📋</span>
+          <p style="color:#0f5a2c"><strong>CAPINORTE COLOMBIA S.A.</strong>, en cumplimiento de lo dispuesto en la Ley 1480 de 2011 (Estatuto del Consumidor) y demás normas aplicables en Colombia, establece la presente Política de Envíos, la cual regula las condiciones bajo las cuales se realiza la entrega de productos adquiridos a través de nuestros canales de venta.</p>
+        </div>
+      </section>
+
+      <!-- 1 -->
+      <section id="s1">
+        <h2><span class="envio-num">1</span> Ámbito de Aplicación</h2>
+        <p>La presente política aplica a todas las compras realizadas a través de:</p>
+        <div class="envio-channels">
+          <div class="envio-channel">
+            <span>🌐</span>
+            <p>Página web de CAPINORTE</p>
+          </div>
+          <div class="envio-channel">
+            <span>📱</span>
+            <p>Aplicaciones móviles</p>
+          </div>
+          <div class="envio-channel">
+            <span>📞</span>
+            <p>Canales telefónicos o digitales habilitados</p>
+          </div>
+          <div class="envio-channel">
+            <span>🏪</span>
+            <p>Cualquier otro canal autorizado por la EMPRESA</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section id="s2">
+        <h2><span class="envio-num">2</span> Cobertura del Servicio</h2>
+        <p>CAPINORTE realizará entregas en las zonas geográficas donde tenga disponibilidad operativa. La cobertura podrá variar dependiendo de:</p>
+        <div class="envio-tags">
+          <span class="envio-tag">📍 Ubicación del cliente</span>
+          <span class="envio-tag">📦 Disponibilidad de inventario</span>
+          <span class="envio-tag">🚛 Condiciones logísticas y de seguridad</span>
+        </div>
+        <div class="legal-alert legal-alert--info" style="background:#f0faf4;border-color:#6fcf97">
+          <span>ℹ️</span>
+          <p style="color:#0f5a2c">El cliente podrá verificar la cobertura al momento de realizar la compra.</p>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section id="s3">
+        <h2><span class="envio-num">3</span> Tiempos de Entrega</h2>
+        <p>Los tiempos de entrega serán informados antes de finalizar la compra y podrán variar según el tipo de envío, la ubicación del cliente y condiciones externas (clima, orden público, alta demanda, etc.).</p>
+
+        <div class="envio-times">
+          <div class="envio-time envio-time--express">
+            <div class="envio-time-ico">⚡</div>
+            <div class="envio-time-label">Express</div>
+            <div class="envio-time-val">Mismo día<br><small>o en pocas horas</small></div>
+          </div>
+          <div class="envio-time envio-time--std">
+            <div class="envio-time-ico">🚚</div>
+            <div class="envio-time-label">Estándar</div>
+            <div class="envio-time-val">1 – 3 días<br><small>hábiles</small></div>
+          </div>
+          <div class="envio-time envio-time--nat">
+            <div class="envio-time-ico">🏙️</div>
+            <div class="envio-time-label">Nacional</div>
+            <div class="envio-time-val">3 – 8 días<br><small>hábiles</small></div>
+          </div>
+        </div>
+
+        <div class="legal-alert legal-alert--info" style="background:#f0faf4;border-color:#6fcf97">
+          <span>⚖️</span>
+          <p style="color:#0f5a2c">De conformidad con la <strong>Ley 1480 de 2011</strong>, CAPINORTE informará de manera clara el tiempo de entrega y cumplirá con el mismo, salvo causas ajenas a su control.</p>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section id="s4">
+        <h2><span class="envio-num">4</span> Costo del Envío</h2>
+        <p>El valor del envío será informado al cliente antes de finalizar la compra y dependerá de:</p>
+        <ul class="legal-list">
+          <li>Ubicación de entrega</li>
+          <li>Tipo de envío seleccionado</li>
+          <li>Peso, volumen o naturaleza del producto</li>
+        </ul>
+        <div class="legal-alert legal-alert--warning">
+          <span>📌</span>
+          <p>El cliente deberá <strong>aceptar expresamente el costo</strong> antes de confirmar la compra.</p>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section id="s5">
+        <h2><span class="envio-num">5</span> Condiciones de Entrega</h2>
+        <div class="envio-conditions">
+          <div class="envio-cond-item">
+            <span class="envio-cond-ico">📬</span>
+            <p>La entrega se realizará en la <strong>dirección indicada por el cliente</strong>.</p>
+          </div>
+          <div class="envio-cond-item">
+            <span class="envio-cond-ico">👤</span>
+            <p>El cliente debe garantizar que haya una <strong>persona mayor de edad</strong> para recibir el pedido.</p>
+          </div>
+          <div class="envio-cond-item">
+            <span class="envio-cond-ico">🪪</span>
+            <p>El mensajero podrá solicitar <strong>documento de identidad</strong> para validar la entrega.</p>
+          </div>
+          <div class="envio-cond-item">
+            <span class="envio-cond-ico">💊</span>
+            <p>En productos que lo requieran (ej. medicamentos con fórmula), se podrá exigir la <strong>documentación correspondiente</strong>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section id="s6">
+        <h2><span class="envio-num">6</span> Intentos de Entrega</h2>
+        <p>En caso de no poder realizar la entrega:</p>
+        <div class="envio-intentos">
+          <div class="envio-intento">
+            <div class="envio-intento-num">1°</div>
+            <p>Primer intento de entrega en la dirección indicada</p>
+          </div>
+          <div class="envio-intento-arrow">→</div>
+          <div class="envio-intento">
+            <div class="envio-intento-num">2°</div>
+            <p>Segundo intento si el primero no fue exitoso</p>
+          </div>
+        </div>
+        <p>Si no es posible entregar el pedido tras los intentos, CAPINORTE podrá <strong>reprogramar la entrega</strong> o <strong>cancelar la orden y gestionar el reembolso</strong> conforme a la ley.</p>
+      </section>
+
+      <!-- 7 -->
+      <section id="s7">
+        <h2><span class="envio-num">7</span> Responsabilidad en la Entrega</h2>
+        <p>CAPINORTE garantiza que los productos serán entregados en condiciones adecuadas de calidad y seguridad.</p>
+        <div class="legal-highlight" style="background:#f0faf4;border-color:#1a7a3e">
+          <span class="legal-highlight-ico">⚖️</span>
+          <div>
+            <p style="color:#0f5a2c">De acuerdo con la <strong>Ley 1480 de 2011</strong>: el riesgo se transfiere al consumidor en el momento de la entrega. El cliente debe verificar el estado del pedido al momento de recibirlo.</p>
+          </div>
+        </div>
+        <p>Si el producto presenta <strong>daños, faltantes o errores</strong>, debe reportarse inmediatamente o dentro de un tiempo razonable a través de los canales de atención.</p>
+        <div class="envio-report-btns">
+          <a href="mailto:contacto@capinorte.com" class="envio-report-btn">
+            <span>📧</span> contacto@capinorte.com
+          </a>
+          <a href="https://wa.me/{{ config.get('whatsapp','573022133390') }}" target="_blank" class="envio-report-btn" style="background:#25D366">
+            <span>💬</span> Reportar por WhatsApp
+          </a>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section id="s8">
+        <h2><span class="envio-num">8</span> Retrasos o Imposibilidad de Entrega</h2>
+        <p>CAPINORTE <strong>no será responsable</strong> por retrasos causados por:</p>
+        <div class="envio-tags">
+          <span class="envio-tag envio-tag--warn">⚡ Fuerza mayor o caso fortuito</span>
+          <span class="envio-tag envio-tag--warn">🌧️ Condiciones climáticas</span>
+          <span class="envio-tag envio-tag--warn">🚧 Situaciones de orden público</span>
+          <span class="envio-tag envio-tag--warn">🚦 Restricciones de movilidad</span>
+        </div>
+        <div class="legal-alert legal-alert--info" style="background:#f0faf4;border-color:#6fcf97">
+          <span>📣</span>
+          <p style="color:#0f5a2c">En estos casos, se informará al cliente y se ofrecerán alternativas de solución.</p>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section id="s9">
+        <h2><span class="envio-num">9</span> Entrega de Productos Especiales</h2>
+        <div class="envio-especiales">
+          <div class="envio-especial">
+            <span class="envio-especial-ico">💊</span>
+            <div>
+              <strong>Medicamentos</strong>
+              <p>Podrán requerir fórmula médica válida para ser entregados.</p>
+            </div>
+          </div>
+          <div class="envio-especial">
+            <span class="envio-especial-ico">🔞</span>
+            <div>
+              <strong>Productos restringidos</strong>
+              <p>Solo se entregarán a personas mayores de edad con identificación válida.</p>
+            </div>
+          </div>
+        </div>
+        <div class="legal-alert legal-alert--warning">
+          <span>⚠️</span>
+          <p>CAPINORTE se reserva el derecho de <strong>no entregar el pedido</strong> si no se cumplen los requisitos legales exigidos.</p>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section id="s10">
+        <h2><span class="envio-num">10</span> Seguimiento del Pedido</h2>
+        <p>El cliente podrá hacer seguimiento de su pedido a través de:</p>
+        <div class="envio-channels">
+          <div class="envio-channel">
+            <span>🌐</span>
+            <p>Plataforma web o app</p>
+          </div>
+          <div class="envio-channel">
+            <span>🎧</span>
+            <p>Canales de atención al cliente</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section id="s11">
+        <h2><span class="envio-num">11</span> Cancelaciones y Reembolsos</h2>
+        <p>En caso de <strong>no entrega del pedido</strong>, cancelación por parte de CAPINORTE o error logístico, se procederá al reembolso conforme a lo establecido en la <strong>Ley 1480 de 2011</strong>, dentro de los plazos legales.</p>
+        <div class="legal-highlight" style="background:#f0faf4;border-color:#1a7a3e">
+          <span class="legal-highlight-ico">💰</span>
+          <p style="color:#0f5a2c">El reembolso se gestionará por el mismo medio de pago utilizado en la compra, dentro de los tiempos establecidos por la normativa colombiana vigente.</p>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section id="s12">
+        <h2><span class="envio-num">12</span> Canales de Atención</h2>
+        <p>Para consultas relacionadas con envíos, el cliente podrá contactarse a través de:</p>
+        <div class="envio-contact-grid">
+          <a href="mailto:contacto@capinorte.com" class="envio-contact-item">
+            <span class="envio-contact-ico" style="background:#e8f4ff">📧</span>
+            <div>
+              <strong>Correo electrónico</strong>
+              <p>contacto@capinorte.com</p>
+            </div>
+          </a>
+          <a href="https://wa.me/{{ config.get('whatsapp','573022133390') }}" target="_blank" class="envio-contact-item">
+            <span class="envio-contact-ico" style="background:#e8fff0">💬</span>
+            <div>
+              <strong>WhatsApp</strong>
+              <p>{{ config.get('whatsapp','573022133390') }}</p>
+            </div>
+          </a>
+          <a href="/" class="envio-contact-item">
+            <span class="envio-contact-ico" style="background:#fff0e8">🌐</span>
+            <div>
+              <strong>Página web</strong>
+              <p>www.capinorte.com.co</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section id="s13">
+        <h2><span class="envio-num">13</span> Modificaciones</h2>
+        <p>CAPINORTE podrá modificar esta Política de Envíos en cualquier momento. Las modificaciones serán publicadas en los canales oficiales y entrarán en vigencia desde su publicación.</p>
+        <div class="legal-alert legal-alert--info" style="background:#f0faf4;border-color:#6fcf97">
+          <span>🔔</span>
+          <p style="color:#0f5a2c">Te recomendamos revisar periódicamente esta política para estar informado sobre cualquier cambio.</p>
+        </div>
+      </section>
+
+    </div><!-- /legal-body -->
+
+    <!-- Pie del documento -->
+    <div class="legal-footer-note">
+      <p>¿Tienes preguntas sobre envíos? Escríbenos a <a href="mailto:contacto@capinorte.com" style="color:#1a7a3e">contacto@capinorte.com</a></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="/terminos" class="legal-related-link" style="background:#c81932">Ver T&amp;C →</a>
+        <a href="/privacidad" class="legal-related-link" style="background:#1A4FA0">Privacidad →</a>
+      </div>
+    </div>
+
+  </div><!-- /legal-card -->
+</div>
+
+<style>
+/* ── LEGAL BASE ─────────────────────────────── */
+.legal-card{
+  background:#fff;
+  border-radius:16px;
+  border:1px solid var(--border);
+  box-shadow:var(--s1);
+  overflow:hidden;
+  max-width:900px;
+  margin:0 auto;
+}
+.legal-header{
+  padding:36px 40px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.legal-icon{
+  font-size:48px;
+  line-height:1;
+  flex-shrink:0;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));
+}
+.legal-title{
+  font-size:28px;
+  font-weight:900;
+  color:#fff;
+  margin-bottom:4px;
+  line-height:1.2;
+}
+.legal-subtitle{
+  font-size:12px;
+  color:rgba(255,255,255,.75);
+  font-weight:500;
+}
+.legal-toc{
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  padding:20px 40px;
+}
+.legal-toc-title{
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--txt3);
+  margin-bottom:10px;
+}
+.legal-toc-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 20px;
+}
+.legal-toc-grid a{
+  font-size:13px;
+  font-weight:600;
+  color:#1a7a3e;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  transition:.15s;
+}
+.legal-toc-grid a:hover{color:#0f5a2c;text-decoration:underline}
+.legal-toc-grid a::before{content:'›';opacity:.6}
+.legal-body{
+  padding:36px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:36px;
+}
+.legal-body section{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.legal-body h2{
+  font-size:18px;
+  font-weight:800;
+  color:var(--txt);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding-bottom:10px;
+  border-bottom:2px solid #c8ecd4;
+}
+.legal-body p{font-size:14px;color:#444;line-height:1.8}
+.legal-body a{color:#1a7a3e;font-weight:600;text-decoration:none;transition:.15s}
+.legal-body a:hover{color:#0f5a2c;text-decoration:underline}
+.legal-body strong{color:var(--txt);font-weight:700}
+
+/* Número verde */
+.envio-num{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;height:32px;
+  background:#1a7a3e;
+  color:#fff;
+  border-radius:50%;
+  font-size:14px;
+  font-weight:900;
+  flex-shrink:0;
+}
+
+/* Destaque */
+.legal-highlight{
+  display:flex;
+  gap:12px;
+  border-left:4px solid;
+  border-radius:0 8px 8px 0;
+  padding:14px 18px;
+  align-items:flex-start;
+}
+.legal-highlight-ico{font-size:20px;flex-shrink:0;margin-top:1px}
+.legal-highlight p{font-size:13px;margin:0;line-height:1.7}
+
+/* Alerta */
+.legal-alert{
+  display:flex;
+  gap:12px;
+  border-radius:8px;
+  padding:14px 18px;
+  align-items:flex-start;
+  border:1px solid transparent;
+}
+.legal-alert span{font-size:20px;flex-shrink:0;margin-top:1px}
+.legal-alert p{font-size:13px;margin:0;line-height:1.7}
+.legal-alert--warning{background:#fff8e6;border-color:#f0d06a}
+.legal-alert--warning p{color:#7a5c00}
+.legal-alert--info{background:#eef7ff;border-color:#93c5fd}
+.legal-alert--info p{color:#1e40af}
+
+/* Lista */
+.legal-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-left:4px;
+}
+.legal-list li{
+  font-size:14px;color:#444;line-height:1.7;
+  display:flex;gap:10px;padding-left:4px;
+}
+.legal-list li::before{
+  content:'•';color:#1a7a3e;
+  font-size:18px;font-weight:900;line-height:1.4;flex-shrink:0;
+}
+
+/* ── ENVÍO SPECIFIC ────────────────── */
+
+/* Canales de compra */
+.envio-channels{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.envio-channel{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 16px;
+}
+.envio-channel span{font-size:24px;flex-shrink:0}
+.envio-channel p{font-size:13px;font-weight:600;color:var(--txt);margin:0}
+
+/* Tags */
+.envio-tags{display:flex;flex-wrap:wrap;gap:10px}
+.envio-tag{
+  background:#f0faf4;
+  border:1px solid #a8d9b8;
+  color:#0f5a2c;
+  font-size:13px;
+  font-weight:600;
+  padding:7px 14px;
+  border-radius:20px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.envio-tag--warn{
+  background:#fff8e6;
+  border-color:#f0d06a;
+  color:#7a5c00;
+}
+
+/* Tiempos de entrega */
+.envio-times{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+}
+.envio-time{
+  border-radius:12px;
+  border:2px solid;
+  padding:20px 16px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.envio-time--express{border-color:#f59e0b;background:#fffbeb}
+.envio-time--std{border-color:#1a7a3e;background:#f0faf4}
+.envio-time--nat{border-color:#1A4FA0;background:#eef7ff}
+.envio-time-ico{font-size:32px}
+.envio-time-label{
+  font-size:12px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.6px;
+  color:var(--txt3);
+}
+.envio-time-val{
+  font-size:22px;font-weight:900;color:var(--txt);line-height:1.2;
+}
+.envio-time-val small{display:block;font-size:11px;font-weight:500;color:var(--txt3);margin-top:2px}
+
+/* Condiciones */
+.envio-conditions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.envio-cond-item{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 16px;
+}
+.envio-cond-ico{font-size:24px;flex-shrink:0;margin-top:2px}
+.envio-cond-item p{font-size:13px;color:#444;margin:0;line-height:1.6}
+
+/* Intentos */
+.envio-intentos{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.envio-intento{
+  flex:1;
+  min-width:180px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+.envio-intento-num{
+  width:44px;height:44px;
+  background:#1a7a3e;
+  color:#fff;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;
+}
+.envio-intento p{font-size:13px;color:#444;margin:0;line-height:1.5}
+.envio-intento-arrow{
+  font-size:28px;color:#1a7a3e;font-weight:900;flex-shrink:0;
+}
+
+/* Botones reporte */
+.envio-report-btns{
+  display:flex;gap:10px;flex-wrap:wrap;
+}
+.envio-report-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#1a7a3e;
+  color:#fff !important;
+  font-size:13px;
+  font-weight:700;
+  padding:10px 20px;
+  border-radius:22px;
+  text-decoration:none !important;
+  transition:.2s;
+}
+.envio-report-btn:hover{opacity:.85;transform:translateY(-1px)}
+
+/* Especiales */
+.envio-especiales{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.envio-especial{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+}
+.envio-especial-ico{font-size:32px;flex-shrink:0}
+.envio-especial strong{display:block;font-size:14px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.envio-especial p{font-size:13px;color:#444;margin:0;line-height:1.6}
+
+/* Contacto */
+.envio-contact-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+}
+.envio-contact-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  text-decoration:none !important;
+  color:inherit !important;
+  transition:.2s;
+}
+.envio-contact-item:hover{
+  border-color:#1a7a3e;
+  background:#f0faf4;
+  transform:translateY(-2px);
+  box-shadow:0 4px 14px rgba(26,122,62,.12);
+}
+.envio-contact-ico{
+  width:40px;height:40px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+}
+.envio-contact-item strong{display:block;font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.envio-contact-item p{font-size:12px;color:var(--txt3);margin:0}
+
+/* Rodapé */
+.legal-footer-note{
+  background:var(--bg);
+  border-top:1px solid var(--border);
+  padding:24px 40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:14px;
+}
+.legal-footer-note p{font-size:13px;color:var(--txt2)}
+.legal-related-link{
+  display:inline-flex;align-items:center;gap:6px;
+  color:#fff !important;font-size:13px;font-weight:700;
+  padding:9px 20px;border-radius:22px;transition:.2s;
+  white-space:nowrap;text-decoration:none !important;
+}
+.legal-related-link:hover{opacity:.85;text-decoration:none !important;transform:translateX(2px)}
+
+/* Responsive */
+@media(max-width:640px){
+  .legal-header{padding:24px 20px;gap:14px}
+  .legal-title{font-size:22px}
+  .legal-icon{font-size:36px}
+  .legal-toc{padding:16px 20px}
+  .legal-body{padding:24px 20px;gap:28px}
+  .envio-channels{grid-template-columns:1fr}
+  .envio-times{grid-template-columns:1fr}
+  .envio-conditions{grid-template-columns:1fr}
+  .envio-especiales{grid-template-columns:1fr}
+  .envio-contact-grid{grid-template-columns:1fr}
+  .envio-intentos{flex-direction:column}
+  .envio-intento-arrow{transform:rotate(90deg)}
+  .legal-footer-note{padding:20px;flex-direction:column}
+}
+</style>
+{% endblock %}

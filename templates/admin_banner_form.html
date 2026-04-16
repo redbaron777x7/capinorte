@@ -1,0 +1,412 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if b else 'Nuevo' }} Banner{% endblock %}
+{% block page_title %}{{ '✏️ Editar' if b else '➕ Nuevo' }} Banner{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── SELECTOR DE POSICIÓN (3 opciones) ───────────────────── */
+.tipo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+@media(max-width:600px) { .tipo-grid { grid-template-columns: 1fr; } }
+
+.tipo-card {
+  border: 2.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: .18s;
+  position: relative;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.tipo-card:hover { border-color: #94a3b8; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+.tipo-card input[type=radio] { position: absolute; opacity: 0; pointer-events: none; }
+
+.tipo-card.sel-principal { border-color: #3b82f6; background: #eff6ff; }
+.tipo-card.sel-promo     { border-color: #8b5cf6; background: #f5f3ff; }
+.tipo-card.sel-lateral_izq { border-color: #22c55e; background: #f0fdf4; }
+
+.tipo-card-icon { font-size: 1.6rem; line-height: 1; }
+.tipo-card-name { font-size: .88rem; font-weight: 900; color: #0f172a; line-height: 1.3; }
+.tipo-card-desc { font-size: .72rem; color: #64748b; line-height: 1.4; }
+.tipo-card-size {
+  display: inline-block; margin-top: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: .68rem; font-weight: 800;
+  background: #f1f5f9; color: #475569;
+  align-self: flex-start;
+}
+.tipo-card.sel-principal .tipo-card-size { background: #dbeafe; color: #1d4ed8; }
+.tipo-card.sel-promo .tipo-card-size     { background: #ede9fe; color: #7c3aed; }
+.tipo-card.sel-lateral_izq .tipo-card-size { background: #bbf7d0; color: #15803d; }
+
+.check-mark {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; font-weight: 900;
+  border: 2px solid #e2e8f0; color: #fff; background: #e2e8f0;
+  transition: .15s;
+}
+.tipo-card.sel-principal .check-mark   { background: #3b82f6; border-color: #3b82f6; }
+.tipo-card.sel-promo .check-mark       { background: #8b5cf6; border-color: #8b5cf6; }
+.tipo-card.sel-lateral_izq .check-mark { background: #22c55e; border-color: #22c55e; }
+
+/* ── DROP ZONE ────────────────────────────────────────────── */
+.drop-zone {
+  border: 2.5px dashed #cbd5e1; border-radius: 12px;
+  padding: 28px 16px; text-align: center; cursor: pointer;
+  background: #f8fafc; transition: .2s; position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: #3b82f6; background: #eff6ff; }
+.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.drop-zone-icon { font-size: 2.2rem; margin-bottom: 8px; }
+.drop-zone p { margin: 0; font-size: .83rem; color: #64748b; }
+.drop-zone strong { color: #3b82f6; }
+
+/* ── PREVIEW ──────────────────────────────────────────────── */
+#preview-wrap { border-radius: 12px; overflow: hidden; border: 2px solid #e2e8f0; margin-bottom: 20px; display: none; background: #000; }
+#preview-img  { width: 100%; max-height: 220px; object-fit: contain; display: block; }
+#preview-label { background: #1e293b; color: #94a3b8; font-size: .72rem; padding: 6px 12px; font-weight: 700; }
+
+.sep { display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: .78rem; font-weight: 700; margin: 12px 0; }
+.sep::before, .sep::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+
+/* ── FORM ROWS ────────────────────────────────────────────── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media(max-width:600px) { .form-row { grid-template-columns: 1fr; } }
+
+/* ── MOBILE EXTRAS ────────────────────────────────────────── */
+@media(max-width:600px){
+  .bf-panel{max-width:100% !important}
+  .bf-panel .panel-body{padding:16px !important}
+  .bf-final-btns{flex-direction:column}
+  .bf-final-btns .btn{width:100%;justify-content:center}
+  .bf-final-btns form{margin-left:0 !important;width:100%}
+  .bf-final-btns form .btn{width:100%}
+  .drop-zone{padding:20px 12px}
+  .drop-zone-icon{font-size:1.8rem}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel bf-panel" style="max-width:800px">
+  <div class="panel-body">
+
+    <!-- ═══ 1. SELECTOR DE POSICIÓN (solo 3 tipos) ═══════════════ -->
+    <div style="margin-bottom:22px">
+      <label style="font-size:.8rem;font-weight:900;color:#475569;display:block;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">
+        1. Selecciona la posición del banner
+      </label>
+
+      <div class="tipo-grid" id="tipo-grid">
+
+        <!-- Hero / Slider Principal -->
+        <label class="tipo-card {% if not b or b.tipo=='principal' %}sel-principal{% endif %}" id="card-principal">
+          <input type="radio" name="_tipo_visual" value="principal"
+                 {% if not b or b.tipo=='principal' %}checked{% endif %}
+                 onchange="selectTipo('principal')">
+          <div class="check-mark">✓</div>
+          <div class="tipo-card-icon">🖼️</div>
+          <div>
+            <div class="tipo-card-name">Hero — Slider Principal</div>
+            <div class="tipo-card-desc">Carrusel principal del home. Acepta hasta 10 imágenes con rotación automática.</div>
+            <div class="tipo-card-size">1280 × 400 px</div>
+          </div>
+        </label>
+
+        <!-- Promocional (4 tarjetas) -->
+        <label class="tipo-card {% if b and b.tipo=='promo' %}sel-promo{% endif %}" id="card-promo">
+          <input type="radio" name="_tipo_visual" value="promo"
+                 {% if b and b.tipo=='promo' %}checked{% endif %}
+                 onchange="selectTipo('promo')">
+          <div class="check-mark">✓</div>
+          <div class="tipo-card-icon">📢</div>
+          <div>
+            <div class="tipo-card-name">Sección Promocional</div>
+            <div class="tipo-card-desc">"Conoce nuestros descuentos" — 4 banners tipo tarjeta debajo de las categorías.</div>
+            <div class="tipo-card-size">800 × 1060 px (3:4)</div>
+          </div>
+        </label>
+
+        <!-- Banner Lateral (Hero Side) -->
+        <label class="tipo-card {% if b and b.tipo=='lateral_izq' %}sel-lateral_izq{% endif %}" id="card-lateral_izq">
+          <input type="radio" name="_tipo_visual" value="lateral_izq"
+                 {% if b and b.tipo=='lateral_izq' %}checked{% endif %}
+                 onchange="selectTipo('lateral_izq')">
+          <div class="check-mark">✓</div>
+          <div class="tipo-card-icon">📎</div>
+          <div>
+            <div class="tipo-card-name">Banner Lateral</div>
+            <div class="tipo-card-desc">Columna derecha junto al hero. Solo visible en desktop.</div>
+            <div class="tipo-card-size">400 × 400 px</div>
+          </div>
+        </label>
+
+      </div>
+    </div>
+
+    <!-- ═══ FORMULARIO ═══════════════════════════════════════════ -->
+    <form method="post" enctype="multipart/form-data" id="banner-form">
+      <!-- campo tipo real oculto -->
+      <input type="hidden" name="tipo" id="tipo-hidden"
+             value="{{ b.tipo if b else 'principal' }}">
+
+      <!-- 2. IMAGEN DESKTOP -->
+      <div style="margin-bottom:22px">
+        <label style="font-size:.8rem;font-weight:900;color:#475569;display:block;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">
+          2. Imagen del banner
+        </label>
+
+        {% if b and b.imagem %}
+        <div id="preview-wrap" style="display:block">
+          <div id="preview-label">Vista previa actual</div>
+          <img id="preview-img" src="{{ b.imagem }}" alt="preview">
+        </div>
+        {% else %}
+        <div id="preview-wrap">
+          <div id="preview-label">Vista previa</div>
+          <img id="preview-img" src="" alt="preview">
+        </div>
+        {% endif %}
+
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" name="arquivo" accept="image/*" id="file-input"
+                 onchange="handleFile(this)">
+          <div class="drop-zone-icon">📁</div>
+          <p><strong>Arrastra tu imagen</strong> o haz clic para seleccionar</p>
+          <p style="margin-top:6px;font-size:.72rem">JPG, PNG, WEBP — máx 5 MB</p>
+        </div>
+
+        <div class="sep">— o pega una URL —</div>
+
+        <div class="form-group" style="margin-bottom:0">
+          <input class="form-control" name="imagem_url" id="img-url"
+                 value="{{ b.imagem if b else '' }}"
+                 placeholder="https://ejemplo.com/imagen.jpg"
+                 oninput="prevUrl(this.value)">
+        </div>
+      </div>
+
+      <!-- 2b. IMAGEN MOBILE (opcional) -->
+      <div style="margin-bottom:22px">
+        <label style="font-size:.8rem;font-weight:900;color:#475569;display:block;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">
+          📱 Imagen mobile <span style="font-weight:400;color:#94a3b8;text-transform:none">(opcional — si no se sube, se usará la imagen desktop)</span>
+        </label>
+
+        {% if b and b.imagem_mobile %}
+        <div id="preview-mob-wrap" style="border-radius:12px;overflow:hidden;border:2px solid #e2e8f0;margin-bottom:12px;background:#000;display:block">
+          <div style="background:#1e293b;color:#94a3b8;font-size:.72rem;padding:6px 12px;font-weight:700">Vista previa mobile</div>
+          <img id="preview-mob-img" src="{{ b.imagem_mobile }}" alt="preview mobile" style="width:100%;max-height:180px;object-fit:contain;display:block">
+        </div>
+        {% else %}
+        <div id="preview-mob-wrap" style="border-radius:12px;overflow:hidden;border:2px solid #e2e8f0;margin-bottom:12px;background:#000;display:none">
+          <div style="background:#1e293b;color:#94a3b8;font-size:.72rem;padding:6px 12px;font-weight:700">Vista previa mobile</div>
+          <img id="preview-mob-img" src="" alt="preview mobile" style="width:100%;max-height:180px;object-fit:contain;display:block">
+        </div>
+        {% endif %}
+
+        <div class="drop-zone" id="drop-zone-mob" style="padding:18px 14px">
+          <input type="file" name="arquivo_mobile" accept="image/*" id="file-input-mob"
+                 onchange="handleFileMob(this)">
+          <div class="drop-zone-icon" style="font-size:1.6rem">📱</div>
+          <p><strong>Imagen mobile</strong></p>
+          <p style="margin-top:4px;font-size:.72rem">Ratio recomendado 1:1 o 4:3 · JPG, PNG, WEBP</p>
+        </div>
+
+        <div class="sep">— o URL de imagen mobile —</div>
+
+        <div class="form-group" style="margin-bottom:0">
+          <input class="form-control" name="imagem_mobile_url" id="img-mob-url"
+                 value="{{ b.imagem_mobile if b else '' }}"
+                 placeholder="https://ejemplo.com/imagen-mobile.jpg"
+                 oninput="prevMobUrl(this.value)">
+        </div>
+      </div>
+
+      <!-- 3. DATOS DEL BANNER -->
+      <div style="margin-bottom:22px">
+        <label style="font-size:.8rem;font-weight:900;color:#475569;display:block;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">
+          3. Datos del banner
+        </label>
+
+        <div class="form-group">
+          <label>Título <span style="color:#94a3b8;font-weight:400">(opcional — solo para identificarlo en el panel)</span></label>
+          <input class="form-control" name="titulo"
+                 value="{{ b.titulo if b else '' }}"
+                 placeholder="Ej: Descuentos de temporada">
+        </div>
+
+        <div class="form-group">
+          <label>Subtítulo / Descripción <span style="color:#94a3b8;font-weight:400">(texto sobre la imagen, opcional)</span></label>
+          <input class="form-control" name="subtitulo"
+                 value="{{ b.subtitulo if b else '' }}"
+                 placeholder="Ej: Hasta 30% de descuento en medicamentos">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Texto del botón CTA <span style="color:#94a3b8;font-weight:400">(opcional)</span></label>
+            <input class="form-control" name="cta_texto"
+                   value="{{ b.cta_texto if b else '' }}"
+                   placeholder="Ej: Comprar ahora">
+          </div>
+          <div class="form-group">
+            <label>Link del CTA <span style="color:#94a3b8;font-weight:400">(si es diferente del link principal)</span></label>
+            <input class="form-control" name="cta_link"
+                   value="{{ b.cta_link if b else '' }}"
+                   placeholder="Ej: /categoria/Droguería">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Link al hacer clic</label>
+            <input class="form-control" name="link"
+                   value="{{ b.link if b else '' }}"
+                   placeholder="/categoria/Droguería o https://...">
+          </div>
+          <div class="form-group">
+            <label>Orden <span style="color:#94a3b8;font-weight:400">(menor = primero)</span></label>
+            <input class="form-control" type="number" name="ordem"
+                   value="{{ b.ordem if b else 0 }}" min="0" style="max-width:100px">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-check" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" name="ativo" {% if not b or b.ativo %}checked{% endif %}
+                   style="width:18px;height:18px;cursor:pointer">
+            <span style="font-size:.88rem;font-weight:700">
+              Banner activo <span style="font-weight:400;color:#64748b">(visible en la tienda)</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- BOTONES FINALES -->
+      <div class="bf-final-btns" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:14px;border-top:2px solid #f1f5f9">
+        <button class="btn btn-verde" type="submit">💾 Guardar banner</button>
+        <a class="btn btn-gris" href="/admin/banners">Cancelar</a>
+        {% if b %}
+        <form method="post" action="/admin/banner/{{ b.id }}/deletar" style="margin-left:auto"
+              onsubmit="return confirm('¿Eliminar este banner permanentemente?')">
+          <button class="btn btn-rojo" type="submit">🗑️ Eliminar</button>
+        </form>
+        {% endif %}
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+// ── Tipos (solo 3) ──────────────────────────────────────────
+const TIPOS = ['principal','promo','lateral_izq'];
+
+function selectTipo(tipo) {
+  document.getElementById('tipo-hidden').value = tipo;
+  TIPOS.forEach(t => {
+    const card = document.getElementById('card-' + t);
+    if (!card) return;
+    card.className = 'tipo-card' + (t === tipo ? ' sel-' + t : '');
+  });
+}
+
+// Pre-selección por URL param (?tipo=promo)
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  const t = p.get('tipo');
+  if (t && TIPOS.includes(t)) selectTipo(t);
+})();
+
+// ── Preview de imagen ────────────────────────────────────────
+function prevUrl(url) {
+  const wrap = document.getElementById('preview-wrap');
+  const img  = document.getElementById('preview-img');
+  if (url && (url.startsWith('http') || url.startsWith('/'))) {
+    img.src = url;
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function handleFile(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('preview-label').textContent = 'Vista previa — ' + input.files[0].name;
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('img-url').value = '';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// Drag & drop desktop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      document.getElementById('preview-img').src = ev.target.result;
+      document.getElementById('preview-label').textContent = 'Vista previa — ' + e.dataTransfer.files[0].name;
+      document.getElementById('preview-wrap').style.display = 'block';
+    };
+    reader.readAsDataURL(e.dataTransfer.files[0]);
+  }
+});
+
+// ── Mobile image preview ─────────────────────────────────────
+function handleFileMob(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('preview-mob-img').src = e.target.result;
+    document.getElementById('preview-mob-wrap').style.display = 'block';
+    document.getElementById('img-mob-url').value = '';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function prevMobUrl(url) {
+  const wrap = document.getElementById('preview-mob-wrap');
+  const img  = document.getElementById('preview-mob-img');
+  if (url && (url.startsWith('http') || url.startsWith('/'))) {
+    img.src = url;
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+const dzm = document.getElementById('drop-zone-mob');
+if (dzm) {
+  dzm.addEventListener('dragover',  e => { e.preventDefault(); dzm.classList.add('drag-over'); });
+  dzm.addEventListener('dragleave', ()  => dzm.classList.remove('drag-over'));
+  dzm.addEventListener('drop', e => {
+    e.preventDefault();
+    dzm.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        document.getElementById('preview-mob-img').src = ev.target.result;
+        document.getElementById('preview-mob-wrap').style.display = 'block';
+      };
+      reader.readAsDataURL(e.dataTransfer.files[0]);
+    }
+  });
+}
+</script>
+{% endblock %}

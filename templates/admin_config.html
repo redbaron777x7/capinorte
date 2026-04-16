@@ -1,0 +1,113 @@
+{% extends "admin_base.html" %}
+{% block title %}Configuración{% endblock %}
+{% block page_title %}Configuración de la Tienda{% endblock %}
+
+{% block extra_css %}
+<style>
+@media(max-width:680px){
+  .config-grid{grid-template-columns:1fr !important;max-width:100% !important}
+  .config-grid .btn{width:100%;justify-content:center}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="config-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px">
+
+  <div class="panel" style="grid-column:1/-1">
+    <div class="panel-header"><h2>⚙️ Configuración general</h2></div>
+    <div class="panel-body">
+      <form method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre de la farmacia</label>
+            <input class="form-control" name="nome_farmacia"
+                   value="{{ config.get('nome_farmacia','') }}"
+                   placeholder="Ej: FarmaOnline">
+          </div>
+          <div class="form-group">
+            <label>Ciudad</label>
+            <input class="form-control" name="cidade"
+                   value="{{ config.get('cidade','') }}"
+                   placeholder="Ej: Bogotá">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Número de WhatsApp (con código de país, sin +)</label>
+          <input class="form-control" name="whatsapp"
+                 value="{{ config.get('whatsapp','') }}"
+                 placeholder="Ej: 573001234567"
+                 pattern="[0-9]{10,15}">
+          <p style="font-size:.75rem;color:#888;margin-top:4px">
+            Colombia: 57 + número. Ej: <strong>573001234567</strong>
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>Mensaje de WhatsApp al hacer clic en "Pedir"</label>
+          <textarea class="form-control" name="mensagem_whatsapp" rows="3"
+            placeholder="Hola! Quiero pedir: *{produto}*. Precio: ${preco}">{{ config.get('mensagem_whatsapp','') }}</textarea>
+          <p style="font-size:.75rem;color:#888;margin-top:4px">
+            Variables disponibles: <code>{produto}</code> = nombre del producto · <code>{preco}</code> = precio
+          </p>
+        </div>
+
+        <button class="btn btn-verde" type="submit">💾 Guardar configuración</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CAMBIAR CONTRASEÑA -->
+  <div class="panel">
+    <div class="panel-header"><h2>🔑 Cambiar contraseña del admin</h2></div>
+    <div class="panel-body">
+      {% if msg_senha %}
+      <div style="padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.83rem;font-weight:600;
+        {% if msg_senha_ok %}background:#d1fae5;color:#064e3b{% else %}background:#fee2e2;color:#991b1b{% endif %}">
+        {{ msg_senha }}
+      </div>
+      {% endif %}
+      <form method="post" action="/admin/config/senha">
+        <div class="form-group">
+          <label>Contraseña actual</label>
+          <input class="form-control" type="password" name="senha_atual"
+                 placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label>Nueva contraseña</label>
+          <input class="form-control" type="password" name="senha_nova"
+                 placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>Confirmar nueva contraseña</label>
+          <input class="form-control" type="password" name="senha_conf"
+                 placeholder="Repite la nueva contraseña" required minlength="6" autocomplete="new-password">
+        </div>
+        <button class="btn btn-verde" type="submit">🔐 Cambiar contraseña</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h2>📊 Estadísticas del sistema</h2></div>
+    <div class="panel-body" style="font-size:.85rem">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #f0f0f0">
+          <span style="color:#888">Base de datos</span>
+          <strong>farmacia.db (SQLite)</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #f0f0f0">
+          <span style="color:#888">Versión</span>
+          <strong>FarmaOnline v1.0</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:#888">Clics totales registrados</span>
+          <strong style="color:var(--verde)">En dashboard</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

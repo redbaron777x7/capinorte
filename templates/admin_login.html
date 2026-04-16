@@ -1,0 +1,42 @@
+<!-- admin_login.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Login</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#00863d,#006e31);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.box{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.logo{text-align:center;margin-bottom:28px}
+.logo div{font-size:2.5rem}
+.logo h1{font-size:1.4rem;font-weight:900;color:#222;margin-top:8px}
+.logo p{font-size:.82rem;color:#888;margin-top:2px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.82rem;font-weight:700;margin-bottom:6px;color:#555}
+.form-control{width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:.95rem;font-family:inherit;outline:none;transition:.15s}
+.form-control:focus{border-color:#00863d}
+.btn{width:100%;padding:12px;background:#00863d;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:800;font-family:inherit;cursor:pointer;transition:.15s;margin-top:4px}
+.btn:hover{background:#006e31}
+.erro{background:#fee2e2;color:#c1121f;padding:10px 14px;border-radius:8px;font-size:.85rem;font-weight:600;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">
+    <div>💊</div>
+    <h1>Panel Admin</h1>
+    <p>Farmacia Online</p>
+  </div>
+  {% if erro %}<div class="erro">{{ erro }}</div>{% endif %}
+  <form method="post">
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input class="form-control" type="password" name="senha" autofocus placeholder="Ingresa tu contraseña">
+    </div>
+    <button class="btn" type="submit">Ingresar</button>
+  </form>
+</div>
+</body>
+</html>

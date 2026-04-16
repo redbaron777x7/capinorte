@@ -1,0 +1,111 @@
+{% extends "admin_base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+@media(max-width:680px){
+  .dash-grid{grid-template-columns:1fr !important}
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- STATS -->
+<div class="stats-grid">
+  <a href="/admin/produtos" class="card-stat" style="text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+    <div class="icon">💊</div>
+    <div><div class="num">{{ total_produtos }}</div><div class="lbl">Productos activos</div></div>
+  </a>
+  <a href="/admin/categorias" class="card-stat" style="text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+    <div class="icon">📁</div>
+    <div><div class="num">{{ total_categorias }}</div><div class="lbl">Categorías</div></div>
+  </a>
+  <a href="/admin/banners" class="card-stat" style="text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+    <div class="icon">🖼️</div>
+    <div><div class="num">{{ total_banners }}</div><div class="lbl">Banners activos</div></div>
+  </a>
+  <div class="card-stat">
+    <div class="icon">👆</div>
+    <div><div class="num">{{ total_cliques_hoje }}</div><div class="lbl">Clics hoy</div></div>
+  </div>
+  {% if sem_descricao > 0 %}
+  <a href="/admin/pendentes?filtro=sem_desc" class="card-stat" style="border-left:3px solid #f59e0b;text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+    <div class="icon" style="background:#fef3c7">⚠️</div>
+    <div><div class="num" style="color:#d97706">{{ sem_descricao }}</div><div class="lbl">Sin descripción</div></div>
+  </a>
+  {% endif %}
+</div>
+
+
+<div class="dash-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+  <!-- GRÁFICO CLIQUES 7 DIAS -->
+  <div class="panel">
+    <div class="panel-header"><h2>📈 Clics — últimos 7 días</h2></div>
+    <div class="panel-body">
+      <canvas id="chart-cliques" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- TOP 10 MAIS CLICADOS -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>🔥 Productos más visitados</h2>
+    </div>
+    <div class="panel-body" style="padding:0;overflow-x:auto">
+      <table class="table" style="min-width:360px">
+
+        <thead><tr><th>Producto</th><th>Categoría</th><th style="text-align:right">Clics</th></tr></thead>
+        <tbody>
+          {% set max_c = mais_clicados[0].total_cliques if mais_clicados else 1 %}
+          {% for p in mais_clicados %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                {% if p.imagem_1 %}
+                <img src="{{ p.imagem_1 }}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:#f5f5f5;flex:none">
+                {% endif %}
+                <div>
+                  <div style="font-weight:700;font-size:.82rem">{{ p.nome[:40] }}{% if p.nome|length > 40 %}...{% endif %}</div>
+                  <div class="bar-wrap" style="width:120px">
+                    <div class="bar-fill" style="width:{{ (p.total_cliques / max_c * 100)|int }}%"></div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:.78rem;color:#888">{{ p.categoria }}</td>
+            <td style="text-align:right;font-weight:900;color:var(--verde)">{{ p.total_cliques }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const dias   = {{ cliques_7d | map(attribute='dia') | list | tojson }};
+const totais = {{ cliques_7d | map(attribute='total') | list | tojson }};
+new Chart(document.getElementById('chart-cliques'), {
+  type: 'bar',
+  data: {
+    labels: dias,
+    datasets: [{
+      label: 'Clics',
+      data: totais,
+      backgroundColor: 'rgba(0,134,61,.7)',
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+  }
+});
+</script>
+{% endblock %}

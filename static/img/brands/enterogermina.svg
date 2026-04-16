@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <rect width="400" height="200" fill="#fff"/>
+  <!-- Texto Enterogermina em azul claro itálico -->
+  <text x="200" y="108"
+    font-family="'Georgia','Times New Roman',serif"
+    font-size="42"
+    font-weight="400"
+    font-style="italic"
+    fill="#0085CA"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    letter-spacing="0">Enterogermina</text>
+  <!-- Ponto / acento itálico -->
+  <text x="362" y="85"
+    font-family="Georgia,serif"
+    font-size="18"
+    fill="#0085CA"
+    text-anchor="middle">™</text>
+</svg>

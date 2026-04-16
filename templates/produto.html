@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}{{ p.nome }} — {{ config.get('nome_farmacia','FarmaOnline') }}{% endblock %}
+{% block content %}
+{% set desconto = ((p.preco_lista_cop - p.preco_cop) / p.preco_lista_cop * 100)|int if p.preco_lista_cop and p.preco_cop and p.preco_lista_cop > p.preco_cop else 0 %}
+{% set wpp = config.get('whatsapp','573001234567') %}
+{% set msg = ('Hola! Quiero pedir: *'+p.nome+'*. Precio: $'+(p.preco_cop|int|string if p.preco_cop else 'Consultar'))|urlencode %}
+
+<div class="container" style="padding-top:20px">
+  <div class="breadcrumb">
+    <a href="/">Inicio</a> ›
+    <a href="/categoria/{{ p.categoria|urlencode }}">{{ p.categoria }}</a> ›
+    <span>{{ p.nome[:60] }}{% if p.nome|length>60 %}...{% endif %}</span>
+  </div>
+
+  <!-- BLOCO PRINCIPAL: IMAGEM + INFO -->
+  <div class="prod-wrap" style="margin-bottom:28px">
+    <!-- GALERIA -->
+    <div class="prod-media">
+      <div class="prod-main" id="img-main">
+        {% if p.imagem_1 %}
+        <img id="img-big" src="{{ p.imagem_1 }}" alt="{{ p.nome }}"
+             onerror="this.style.display='none';document.getElementById('no-img').style.display='flex'">
+        <div id="no-img" style="display:none;font-size:5rem">💊</div>
+        {% else %}
+        <div style="font-size:5rem">💊</div>
+        {% endif %}
+      </div>
+      {% set thumbs = [p.imagem_1, p.imagem_2, p.imagem_3, p.imagem_4]|select|list %}
+      {% if thumbs|length > 1 %}
+      <div class="prod-thumbs">
+        {% for img in thumbs %}
+        <button class="prod-thumb" type="button" onclick="document.getElementById('img-big').src='{{ img }}'">
+          <img src="{{ img }}" loading="lazy">
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- INFO -->
+    <div class="prod-info">
+      {% if p.marca %}<div class="prod-brand">{{ p.marca }}</div>{% endif %}
+      <h1 class="prod-title">{{ p.nome }}</h1>
+      {% if p.ean %}<div style="font-size:.85rem;color:var(--txt3)">EAN: {{ p.ean }}</div>{% endif %}
+      {% if p.sku %}<div style="font-size:.82rem;color:var(--txt3)">SKU: {{ p.sku }}</div>{% endif %}
+
+      <div class="prod-price-row">
+        {% if p.preco_cop %}
+        <span class="prod-price">${{ "{:,.0f}".format(p.preco_cop).replace(",",".") }}</span>
+        {% if desconto > 0 %}
+        <span class="prod-old">${{ "{:,.0f}".format(p.preco_lista_cop).replace(",",".") }}</span>
+        <span class="prod-pill">-{{ desconto }}%</span>
+        {% endif %}
+        {% else %}
+        <span class="prod-old" style="font-size:1.1rem">Consultar precio</span>
+        {% endif %}
+      </div>
+
+      <div class="prod-cta">
+        <a class="btn-wpp-lg" href="https://wa.me/{{ wpp }}?text={{ msg }}" target="_blank">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.105.544 4.084 1.497 5.8L0 24l6.335-1.654A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.668-.516-5.187-1.415l-.371-.22-3.762.982.999-3.668-.241-.378A9.97 9.97 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Pedir por WhatsApp
+        </a>
+      </div>
+
+      {% set desc = p.descricao|default('', true)|trim %}
+      {% if desc %}
+      <div class="prod-desc">
+        <h3>Descripción</h3>
+        <p style="white-space:pre-line">{{ desc }}</p>
+      </div>
+      {% endif %}
+
+      <div style="font-size:.85rem;color:var(--txt3);padding-top:6px;border-top:1px solid var(--border)">
+        Categoría: <strong>{{ p.categoria }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUTOS RELACIONADOS — SEÇÃO INFERIOR -->
+  {% if relacionados %}
+  <hr style="border:none;border-top:1px solid var(--border);margin:8px 0 24px">
+  <div class="sec-hdr" style="margin-bottom:16px">
+    <h2>📦 También te puede interesar</h2>
+  </div>
+  <div class="grid-produtos" style="margin-bottom:32px">
+    {% for p in relacionados %}{% include "_card.html" %}{% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

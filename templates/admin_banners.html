@@ -1,0 +1,370 @@
+{% extends "admin_base.html" %}
+{% block title %}Gestión de Banners{% endblock %}
+{% block page_title %}🖼️ Gestión de Banners{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── ADMIN BANNERS — DISEÑO LIMPIO ───────────────────────── */
+.ab-section {
+  margin-bottom: 32px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+}
+.ab-header {
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ab-header.hero   { background: linear-gradient(90deg,#eff6ff,#dbeafe); border-bottom: 3px solid #3b82f6; }
+.ab-header.promo  { background: linear-gradient(90deg,#faf5ff,#f3e8ff); border-bottom: 3px solid #8b5cf6; }
+.ab-header.side   { background: linear-gradient(90deg,#f0fdf4,#dcfce7); border-bottom: 3px solid #22c55e; }
+
+.ab-header-left { display: flex; align-items: center; gap: 14px; }
+.ab-icon {
+  width: 46px; height: 46px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.ab-icon.hero  { background: #dbeafe; }
+.ab-icon.promo { background: #ede9fe; }
+.ab-icon.side  { background: #bbf7d0; }
+
+.ab-meta strong { display: block; font-size: .95rem; font-weight: 900; color: #0f172a; }
+.ab-meta span   { font-size: .76rem; color: #64748b; }
+
+.ab-header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ab-badge {
+  background: rgba(255,255,255,.8); border: 1.5px solid currentColor;
+  padding: 4px 14px; border-radius: 20px; font-size: .72rem; font-weight: 800;
+  backdrop-filter: blur(4px);
+}
+.ab-badge.hero  { color: #2563eb; }
+.ab-badge.promo { color: #7c3aed; }
+.ab-badge.side  { color: #16a34a; }
+
+.ab-btn-add {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 10px; font-size: .82rem;
+  font-weight: 800; text-decoration: none; color: #fff;
+  transition: .2s; white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.ab-btn-add:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.ab-btn-add.hero  { background: #3b82f6; }
+.ab-btn-add.promo { background: #8b5cf6; }
+.ab-btn-add.side  { background: #22c55e; }
+
+/* ── TABLE ROWS (desktop) ────────────────────────────────── */
+.ab-colhdr {
+  display: grid; grid-template-columns: 120px 1fr 90px 70px 90px;
+  gap: 0; padding: 8px 20px; background: #f8fafc;
+  font-size: .7rem; font-weight: 800; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: .06em;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ab-row {
+  display: grid; grid-template-columns: 120px 1fr 90px 70px 90px;
+  align-items: center; gap: 0; padding: 12px 20px;
+  border-bottom: 1px solid #f8fafc; transition: background .15s;
+}
+.ab-row:last-child { border-bottom: none; }
+.ab-row:hover { background: #f8fafc; }
+
+.ab-thumb {
+  width: 104px; height: 52px; object-fit: cover;
+  border-radius: 8px; background: #f1f5f9;
+  border: 1px solid #e2e8f0; display: block;
+}
+.ab-thumb-empty {
+  width: 104px; height: 52px; border-radius: 8px;
+  background: #f1f5f9; border: 2px dashed #cbd5e1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; color: #94a3b8;
+}
+.ab-title { font-size: .85rem; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+.ab-link  { font-size: .72rem; color: #64748b; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 240px; }
+.ab-order { font-size: .82rem; color: #64748b; text-align: center; font-weight: 700; }
+.ab-actions { display: flex; gap: 6px; justify-content: flex-end; position: relative; z-index: 99; pointer-events: auto !important; }
+.ab-actions a { position: relative; z-index: 100; pointer-events: auto !important; }
+
+.ab-st-on  { background: #dcfce7; color: #166534; padding: 3px 10px; border-radius: 20px; font-size: .7rem; font-weight: 800; }
+.ab-st-off { background: #f1f5f9; color: #94a3b8; padding: 3px 10px; border-radius: 20px; font-size: .7rem; font-weight: 800; }
+
+.ab-empty {
+  padding: 40px 20px; text-align: center; color: #94a3b8;
+}
+.ab-empty-icon { font-size: 2.4rem; margin-bottom: 8px; display: block; opacity: .6; }
+.ab-empty p { font-size: .85rem; margin-bottom: 12px; }
+
+/* ── PROMO PREVIEW GRID (4 slots) ───────────────────────── */
+.promo-preview {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  padding: 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+}
+.promo-slot-wrap {
+  border-radius: 14px; overflow: hidden;
+  background: #fff; border: 2px solid #e2e8f0;
+  display: flex; flex-direction: column; transition: .2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.promo-slot-wrap:hover { border-color: #8b5cf6; box-shadow: 0 4px 16px rgba(139,92,246,.15); }
+.promo-slot {
+  background: #fff; border: none;
+  display: flex; flex-direction: column; transition: .2s;
+}
+.promo-slot-img {
+  aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; background: #f1f5f9; position: relative;
+}
+.promo-slot-img img { width: 100%; height: 100%; object-fit: cover; }
+.promo-slot-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6px; width: 100%; height: 100%;
+}
+.promo-slot-empty span { font-size: 1.8rem; opacity: .4; }
+.promo-slot-empty p { font-size: .72rem; color: #94a3b8; font-weight: 600; text-align: center; }
+.promo-slot-bar {
+  padding: 8px 10px; background: #fff;
+  border-top: 1px solid #f1f5f9;
+  display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  position: relative; z-index: 10;
+}
+.promo-slot-label { font-size: .72rem; font-weight: 700; color: #475569; }
+.promo-slot-actions { display: flex; gap: 4px; position: relative; z-index: 10; }
+.promo-slot-actions a, .promo-slot-actions button {
+  font-size: .68rem; padding: 3px 8px; border-radius: 6px;
+  border: 1px solid #e2e8f0; background: #fff; cursor: pointer;
+  transition: .15s; text-decoration: none; color: #475569;
+  pointer-events: all !important; position: relative; z-index: 20;
+}
+.promo-slot-actions a:hover { background: #f1f5f9; }
+.promo-slot-actions button:hover { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+
+/* ── MOBILE ══════════════════════════════════════════════════ */
+@media(max-width:680px){
+  /* Header: empilha esquerda/direita */
+  .ab-header{flex-direction:column;align-items:flex-start;padding:14px 16px;gap:10px}
+  .ab-header-right{flex-wrap:wrap;gap:8px}
+  .ab-badge{font-size:.68rem;padding:3px 10px}
+  .ab-btn-add{padding:7px 14px;font-size:.78rem}
+  .ab-meta strong{font-size:.85rem}
+  .ab-meta span{font-size:.7rem}
+  .ab-icon{width:38px;height:38px;font-size:1rem}
+
+  /* Oculta cabeçalho de tabela */
+  .ab-colhdr{display:none}
+
+  /* Rows viram cards */
+  .ab-row{
+    display:flex;flex-direction:row;flex-wrap:wrap;
+    gap:10px;padding:12px 14px;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .ab-row > div:first-child{flex-shrink:0}
+  .ab-thumb{width:72px;height:42px}
+  .ab-thumb-empty{width:72px;height:42px}
+  .ab-row > div:nth-child(2){flex:1;min-width:0}
+  /* Status e ordem ficam inline */
+  .ab-row > div:nth-child(3),
+  .ab-row > div:nth-child(4){display:inline-flex;align-items:center}
+  .ab-order{font-size:.75rem}
+  /* Ações full-width */
+  .ab-actions{margin-left:auto}
+
+  /* Promo grid: 2 colunas */
+  .promo-preview{grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+}
+
+@media(max-width:400px){
+  .promo-preview{grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+  .ab-btn-add{width:100%;justify-content:center}
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+{# ───── Agrupación de banners por tipo ───── #}
+{% set bs_principal = banners | selectattr('tipo','equalto','principal') | list %}
+{% set bs_promo     = banners | selectattr('tipo','equalto','promo')     | list %}
+{% set bs_lat_izq   = banners | selectattr('tipo','equalto','lateral_izq') | list %}
+
+
+<!-- ═══ SECCIÓN 1 — HERO BANNER (Slider Principal) ═══════════════ -->
+<div class="ab-section">
+  <div class="ab-header hero">
+    <div class="ab-header-left">
+      <div class="ab-icon hero">🖼️</div>
+      <div class="ab-meta">
+        <strong>Hero Banner — Slider Principal</strong>
+        <span>Carrusel animado en la parte superior del home · acepta hasta 10 imágenes con rotación automática cada 2 segundos</span>
+      </div>
+    </div>
+    <div class="ab-header-right">
+      <span class="ab-badge hero">1280 × 400 px · JPG/PNG/WEBP</span>
+      <a class="ab-btn-add hero" href="/admin/banner/novo?tipo=principal">+ Agregar slide</a>
+    </div>
+  </div>
+  <div>
+    {% if bs_principal %}
+      <div class="ab-colhdr">
+        <span>Vista previa</span><span>Título / Link</span>
+        <span style="text-align:center">Estado</span>
+        <span style="text-align:center">Orden</span>
+        <span style="text-align:right">Acciones</span>
+      </div>
+      {% for b in bs_principal %}
+      <div class="ab-row">
+        <div>
+          {% if b.imagem %}<img class="ab-thumb" src="{{ b.imagem }}" alt="{{ b.titulo }}">
+          {% else %}<div class="ab-thumb-empty">🖼️</div>{% endif %}
+        </div>
+        <div>
+          <div class="ab-title">{{ b.titulo or '(sin título)' }}</div>
+          <div class="ab-link">{{ b.link or '—' }}</div>
+        </div>
+        <div style="text-align:center">
+          {% if b.ativo %}<span class="ab-st-on">✅ Activo</span>
+          {% else %}<span class="ab-st-off">⏸ Oculto</span>{% endif %}
+        </div>
+        <div class="ab-order">{{ b.ordem }}</div>
+        <div class="ab-actions">
+          <a class="btn btn-gris btn-sm" href="/admin/banner/{{ b.id }}/editar" title="Editar">✏️</a>
+          <a class="btn btn-rojo btn-sm" href="/admin/banner/{{ b.id }}/deletar" title="Eliminar">🗑️</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="ab-empty">
+        <span class="ab-empty-icon">🖼️</span>
+        <p>No hay slides en el hero. Agrega el primero para activar el carrusel.</p>
+        <a href="/admin/banner/novo?tipo=principal" class="btn btn-azul">+ Agregar el primer slide</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+
+<!-- ═══ SECCIÓN 2 — BANNERS PROMOCIONALES (4 posiciones) ═════════ -->
+<div class="ab-section">
+  <div class="ab-header promo">
+    <div class="ab-header-left">
+      <div class="ab-icon promo">📢</div>
+      <div class="ab-meta">
+        <strong>Sección Promocional — "Conoce nuestros descuentos"</strong>
+        <span>4 banners tipo tarjeta · aparecen debajo de las categorías en el home · formato vertical (portrait)</span>
+      </div>
+    </div>
+    <div class="ab-header-right">
+      <span class="ab-badge promo">800 × 1060 px (3:4) · JPG/PNG/WEBP</span>
+      {% if bs_promo|length < 4 %}
+      <a class="ab-btn-add promo" href="/admin/banner/novo?tipo=promo">+ Agregar banner</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Vista previa visual de las 4 posiciones -->
+  <div class="promo-preview">
+    {% for i in range(4) %}
+    {% set b = bs_promo[i] if i < bs_promo|length else none %}
+    <div class="promo-slot-wrap">
+    <div class="promo-slot">
+      <div class="promo-slot-img">
+        {% if b and b.imagem %}
+          <img src="{{ b.imagem }}" alt="{{ b.titulo or '' }}">
+        {% else %}
+          <div class="promo-slot-empty">
+            <span>🖼️</span>
+            <p>Banner {{ i + 1 }}<br>vacío</p>
+          </div>
+        {% endif %}
+      </div>
+      <div class="promo-slot-bar">
+        <span class="promo-slot-label">
+          {% if b %}
+            {{ b.titulo or 'Banner ' ~ (i+1) }}
+            {% if b.ativo %}<span style="color:#16a34a">●</span>{% else %}<span style="color:#94a3b8">●</span>{% endif %}
+          {% else %}
+            Posición {{ i + 1 }}
+          {% endif %}
+        </span>
+        <div class="promo-slot-actions">
+          {% if b %}
+            <a href="/admin/banner/{{ b.id }}/editar" title="Editar">✏️</a>
+            <a class="do-delete-btn" href="/admin/banner/{{ b.id }}/deletar" title="Eliminar">🗑️</a>
+          {% else %}
+            <a href="/admin/banner/novo?tipo=promo" title="Agregar">➕</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<!-- ═══ SECCIÓN 3 — BANNER LATERAL (Hero Side) ═══════════════════ -->
+<div class="ab-section">
+  <div class="ab-header side">
+    <div class="ab-header-left">
+      <div class="ab-icon side">📎</div>
+      <div class="ab-meta">
+        <strong>Banner Lateral — Columna derecha del Hero</strong>
+        <span>Aparece junto al carrusel principal en desktop · se oculta en mobile</span>
+      </div>
+    </div>
+    <div class="ab-header-right">
+      <span class="ab-badge side">400 × 400 px · JPG/PNG/WEBP</span>
+      <a class="ab-btn-add side" href="/admin/banner/novo?tipo=lateral_izq">+ Agregar banner</a>
+    </div>
+  </div>
+  <div>
+    {% if bs_lat_izq %}
+      <div class="ab-colhdr">
+        <span>Vista previa</span><span>Título / Link</span>
+        <span style="text-align:center">Estado</span>
+        <span style="text-align:center">Orden</span>
+        <span style="text-align:right">Acciones</span>
+      </div>
+      {% for b in bs_lat_izq %}
+      <div class="ab-row">
+        <div>
+          {% if b.imagem %}<img class="ab-thumb" src="{{ b.imagem }}" alt="{{ b.titulo }}">
+          {% else %}<div class="ab-thumb-empty">📎</div>{% endif %}
+        </div>
+        <div>
+          <div class="ab-title">{{ b.titulo or '(sin título)' }}</div>
+          <div class="ab-link">{{ b.link or '—' }}</div>
+        </div>
+        <div style="text-align:center">
+          {% if b.ativo %}<span class="ab-st-on">✅ Activo</span>
+          {% else %}<span class="ab-st-off">⏸ Oculto</span>{% endif %}
+        </div>
+        <div class="ab-order">{{ b.ordem }}</div>
+        <div class="ab-actions">
+          <a class="btn btn-gris btn-sm" href="/admin/banner/{{ b.id }}/editar" title="Editar">✏️</a>
+          <a class="btn btn-rojo btn-sm" href="/admin/banner/{{ b.id }}/deletar" title="Eliminar">🗑️</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="ab-empty">
+        <span class="ab-empty-icon">📎</span>
+        <p>No hay banner lateral. Se mostrará un placeholder junto al hero.</p>
+        <a href="/admin/banner/novo?tipo=lateral_izq" class="btn btn-verde">+ Agregar banner lateral</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+
+
+{% endblock %}
