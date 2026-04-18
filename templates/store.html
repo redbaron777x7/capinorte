@@ -229,11 +229,11 @@
       {# ── Logos reais em /static/img/brands/ ── #}
       {% set marcas = [
         ('Engystol',      '/buscar?q=engystol',      'engystol.svg'),
-        ('Enterogermina', '/buscar?q=enterogermina', 'Enterogermina.svg'),
-        ("Pond's",        '/buscar?q=ponds',         'Ponds.svg'),
+        ('Enterogermina', '/buscar?q=enterogermina', 'enterogermina.svg'),
+        ("Pond's",        '/buscar?q=ponds',         'ponds.svg'),
         ('Nivea',         '/buscar?q=nivea',         'nivea.svg'),
-        ('Eucerin',       '/buscar?q=eucerin',       'Eucerin.svg'),
-        ('Genfar',        '/buscar?q=genfar',        'Genfar.svg'),
+        ('Eucerin',       '/buscar?q=eucerin',       'eucerin.svg'),
+        ('Genfar',        '/buscar?q=genfar',        'genfar.svg'),
         ('La Santé',      '/buscar?q=sante',         'lasante.svg'),
         ('MK',            '/buscar?q=mk',            'mk.svg')
       ] %}
@@ -242,7 +242,8 @@
         <div class="brand-ico">
           <img src="/static/img/brands/{{ logo }}"
                alt="Logo {{ nome }}"
-               loading="lazy">
+               loading="lazy"
+               onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src=this.src.replace('.svg','.webp')}">
         </div>
         <span class="brand-lbl">{{ nome }}</span>
       </a>
