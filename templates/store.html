@@ -44,41 +44,11 @@
           </div>
           {% endfor %}
         {% else %}
-          <div class="banner-slide default-1">
-            <div class="slide-body">
-              <span class="slide-tag">🔥 Bienvenidos</span>
-              <h1 class="slide-h">Mejora tu salud<br>con los <em>mejores</em><br>medicamentos</h1>
-              <p class="slide-p">Encuentra todo para tu bienestar con los mejores precios y la comodidad del domicilio.</p>
-              <div class="slide-btns">
-                <a href="/buscar?q=" class="btn-white">Ver productos 🛒</a>
-                <a href="https://wa.me/{{ config.get('whatsapp','') }}" class="btn-border" target="_blank">Pedir ahora →</a>
-              </div>
+          <div class="banner-slide" style="background:#f3f4f6;display:flex;align-items:center;justify-content:center;min-height:200px">
+            <div style="text-align:center;padding:40px 20px;color:#9ca3af">
+              <span style="font-size:48px;display:block;margin-bottom:12px">🖼️</span>
+              <p style="font-size:14px;font-weight:600;margin:0">Agrega banners desde el panel de administración</p>
             </div>
-            <div class="slide-deco">💊</div>
-          </div>
-          <div class="banner-slide default-2">
-            <div class="slide-body">
-              <span class="slide-tag">💄 Belleza</span>
-              <h1 class="slide-h">Cuidado personal<br>al <em>mejor precio</em></h1>
-              <p class="slide-p">Más de 3.000 productos con entrega a domicilio.</p>
-              <div class="slide-btns">
-                <a href="/categoria/Belleza" class="btn-white">Ver belleza ✨</a>
-                <a href="/buscar?q=" class="btn-border">Catálogo →</a>
-              </div>
-            </div>
-            <div class="slide-deco">🧴</div>
-          </div>
-          <div class="banner-slide default-3">
-            <div class="slide-body">
-              <span class="slide-tag">👶 Bebé y Mamá</span>
-              <h1 class="slide-h">Todo para el<br><em>bienestar</em><br>de tu bebé</h1>
-              <p class="slide-p">Pañales, cremas, alimentos infantiles y más.</p>
-              <div class="slide-btns">
-                <a href="/buscar?q=bebe" class="btn-white">Ver bebé 👶</a>
-                <a href="/buscar?q=maternidad" class="btn-border">Maternidad →</a>
-              </div>
-            </div>
-            <div class="slide-deco">👶</div>
           </div>
         {% endif %}
       </div>
@@ -89,8 +59,6 @@
           {% for b in banners_p %}<button class="bdot {% if loop.first %}on{% endif %}" data-i="{{ loop.index0 }}"></button>{% endfor %}
         {% else %}
           <button class="bdot on" data-i="0"></button>
-          <button class="bdot" data-i="1"></button>
-          <button class="bdot" data-i="2"></button>
         {% endif %}
       </div>
     </div>
