@@ -796,13 +796,13 @@ input{outline:none}
 }
 .promo-banner-card{
   border-radius:18px;overflow:hidden;display:block;
-  aspect-ratio:3/4;position:relative;
+  background:#f8fafc;position:relative;
   box-shadow:0 2px 12px rgba(0,0,0,.08);
   transition:transform .25s,box-shadow .25s;
-  background:#f8fafc;
+  display:flex;align-items:center;justify-content:center;
 }
 .promo-banner-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.14)}
-.promo-banner-card img{width:100%;height:100%;object-fit:cover;display:block}
+.promo-banner-card img{width:100%;height:auto;max-height:100%;object-fit:contain;display:block}
 .promo-banner-empty{
   width:100%;height:100%;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:8px;
