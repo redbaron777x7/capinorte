@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1"/>
 <title>{% block title %}{{ config.get('nome_farmacia','Capinorte Droguerías') }} — Todo lo que necesitas, sin ir lejos.{% endblock %}</title>
 <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favico.ico') }}">
-<!-- Helvetica: fonte do sistema, nenhum import externo necessário -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<!-- Tipografia Estilo Locatel -->
 <style>
 :root{
   --red:#c81932;--red2:#a11528;--red3:#8a1021;
@@ -18,22 +21,49 @@
   --s2:0 4px 16px rgba(0,0,0,.10);
   --s3:0 8px 32px rgba(0,0,0,.14);
   --r:8px;--r2:12px;
-  --font:Helvetica,Arial,sans-serif;
+  --font: 'Mont', 'Montserrat', -apple-system, BlinkMacSystemFont, 'avenir next', 'helvetica neue', sans-serif;
 }
-/* ── RESET TIPOGRÁFICO GLOBAL ─────────────────────────────────── */
+/* ── RESET TIPOGRÁFICO GLOBAL (Locatel Design System) ───────────────────────── */
 *,*::before,*::after{
   box-sizing:border-box;margin:0;padding:0;
-  font-family:Helvetica,Arial,sans-serif !important;
-  font-size:14px !important;
-  font-weight:400 !important;
-  font-style:normal !important;
-  line-height:21px !important;
 }
 html{scroll-behavior:smooth}
-body{background:var(--white);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-/* ── Exceções hero ─── tamanhos maiores sobrescrevem o reset */
-.slide-h{font-size:48px !important;font-weight:700 !important;line-height:1.12 !important}
-.slide-h em{font-size:inherit !important;line-height:inherit !important;font-style:normal !important}
+body{
+  background:var(--white); color:var(--txt);
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  font-family: var(--font) !important;
+  font-size: 14px !important; /* Texto base */
+  font-weight: 400 !important; /* Regular */
+  line-height: 1.5 !important;
+}
+
+/* Base override to allow specific font weights/sizes where necessary */
+* { font-family: var(--font); }
+strong, b { font-weight: 700 !important; }
+
+/* Micro-textos / Rodapés / Labels: 12px a 13px */
+.topbar, .info-lbl, .info-sub { font-size: 12px !important; }
+
+/* Botões: 15px e 16px (Medium 500) */
+button, .btn, .btn-dir, .nav-link, .btn-white, .btn-border, .cat-trigger { 
+  font-weight: 500 !important; 
+}
+.btn, .btn-dir, .btn-white, .btn-border { font-size: 15px !important; }
+
+/* Categorias, Produtos e Rótulos (Semi-Bold 600) */
+.prod-title, .cat-name, .home-cat-name, .nav-link, .ac-name, .cp-label { font-weight: 600 !important; }
+
+/* Preços, Alertas, Secundários (Bold 700) */
+.prod-price, .ac-price, h2, h3, h4, th, .sec-hdr h2, .cp-toggle { font-weight: 700 !important; }
+h3, h4 { font-size: 20px !important; }
+h2 { font-size: 24px !important; }
+
+/* Títulos Maiores / Super Promoções (Black 900) */
+h1 { font-size: 48px !important; font-weight: 900 !important; line-height: 1.12 !important; }
+
+/* ── Exceções hero ─── tamanhos originais mas com pesos ajustados */
+.slide-h{font-size:48px !important;font-weight:900 !important;line-height:1.12 !important}
+.slide-h em{font-size:inherit !important;line-height:inherit !important;font-style:normal !important;font-weight:900 !important}
 .slide-p{font-size:15px !important;line-height:1.65 !important}
 .slide-tag{font-size:11px !important;font-weight:600 !important;line-height:1 !important}
 @media(max-width:768px){.slide-h{font-size:28px !important}.slide-p{font-size:13px !important}}
@@ -345,13 +375,14 @@ input{outline:none}
 .hero-grid{
   display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:stretch;
 }
-.banner-wrap{position:relative;overflow:hidden;border-radius:16px;background:transparent;box-shadow:var(--s2)}
-.banner-track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
-.banner-slide{min-width:100%;position:relative;display:flex;align-items:center;overflow:hidden}
+.banner-wrap{position:relative;overflow:hidden;border-radius:16px;background:transparent;box-shadow:var(--s2);height:100%}
+.banner-track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1);height:100%}
+.banner-slide{min-width:100%;position:relative;display:flex;align-items:stretch;overflow:hidden}
+.banner-slide a, .banner-slide picture {display:block;width:100%;height:100%}
 .banner-slide.default-1{background:linear-gradient(130deg,#8B1A1E 0%,#C1272D 55%,#d9595d 100%)}
 .banner-slide.default-2{background:linear-gradient(130deg,#A01F24 0%,#C1272D 60%,#e07070 100%)}
 .banner-slide.default-3{background:linear-gradient(130deg,#7a161a 0%,#b02228 50%,#C1272D 100%)}
-.banner-slide img.full{width:100%;aspect-ratio:3.5/1;max-height:380px;object-fit:cover;display:block}
+.banner-slide img.full{width:100%;height:100%;aspect-ratio:3.5/1;max-height:380px;object-fit:cover;display:block;margin:0;padding:0}
 /* Fallback slides height */
 .banner-slide.default-1,.banner-slide.default-2,.banner-slide.default-3{aspect-ratio:3.5/1;max-height:380px}
 /* Side banner (lateral do hero, estilo Locatel) */
